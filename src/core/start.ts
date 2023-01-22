@@ -1,34 +1,29 @@
 import { Client } from "discord.js";
-import fs from "fs";
-import { join } from "path";
-import { CommandFile, loadDir, loadFile } from "./loader";
+import { LoadContext, loadDir } from "./loader";
+import chalk from "chalk";
 
 export type Config = {
     dir: string;
-    filterFiles?: (file: string) => boolean;
 };
 
+const ready = "Ready";
+
 export async function start(client: Client, config: Config) {
-    const files = fs
-        .readdirSync(config.dir)
-        .filter(config.filterFiles ?? (() => true));
-    const loaded: CommandFile[] = [];
+    const context: LoadContext = { client, commands: [] };
+    console.time(ready);
 
-    for (const file of files) {
-        const path = join(config.dir, file);
+    await loadDir(config.dir, context);
 
-        if (fs.lstatSync(path).isDirectory()) {
-            const data = await loadDir(path, { client });
-            if (data == null) continue;
+    console.log(chalk.yellow("Registering commands..."));
 
-            if (data != null) loaded.push(...data);
-        } else {
-            const data = await loadFile(path, { client });
-            if (data == null) continue;
+    const application = context.client.application;
 
-            loaded.push(data);
-        }
+    if (application == null)
+        throw new Error("Client is not ready to register commands");
+
+    for (const command of context.commands) {
+        await application.commands.create(command);
     }
 
-    return loaded;
+    console.timeEnd(ready);
 }

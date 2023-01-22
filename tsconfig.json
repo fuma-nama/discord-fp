@@ -7,9 +7,10 @@
         "moduleResolution": "node",
         "target": "ES2022",
         "strictNullChecks": true,
-
         "paths": {
-            "discord-fp": ["./src"]
+            "discord-fp": ["./src"],
+            "@types": ["./src/types.ts"],
+            "@/*": ["./src/*"]
         }
     },
     "ts-node": {

@@ -1,80 +1,56 @@
-import { lstatSync, readdirSync } from "fs";
-import { Client } from "discord.js";
-import { join } from "path";
-import { findMetaFile } from "../utils";
+import { Group, Node, Folder } from "@types";
+import { ApplicationCommandDataResolvable, Client } from "discord.js";
+import { readDir } from "../utils";
+import chalk from "chalk";
 
-export abstract class CommandFile {
+export abstract class FileLoader {
     /**
-     * @param path Path of the file to be loaded
+     * @param self The node of current file
      * @param context
      */
-    abstract load(path: string, context: LoadContext): void | Promise<void>;
+    abstract load(self: Node, context: LoadContext): void | Promise<void>;
 }
 
-export abstract class MetaFile extends CommandFile {}
+export abstract class GroupLoader extends FileLoader {
+    abstract override load(
+        self: Group,
+        context: LoadContext
+    ): void | Promise<void>;
+}
 
 export type LoadContext = {
     client: Client;
+    commands: ApplicationCommandDataResolvable[];
 };
 
-export async function loadFile(
-    path: string,
-    context: LoadContext
-): Promise<CommandFile | undefined> {
-    const data = (await import(path)).default as CommandFile | undefined;
+export async function loadNode(node: Node, context: LoadContext) {
+    switch (node.type) {
+        case "file": {
+            await node.loader.load(node, context);
+            break;
+        }
+        case "folder": {
+            for (const child of node.nodes) {
+                await loadNode(child, context);
+            }
 
-    if (data == null) {
-        console.warn("Skipped a file without the default export", path);
-        return;
+            break;
+        }
+        case "group": {
+            await node.meta.loader.load(node, context);
+            break;
+        }
     }
 
-    try {
-        await data.load(path, context);
-    } catch (e) {
-        throw new Error(`Failed to load ${path}`, { cause: e });
-    }
-
-    console.log("File Loaded", path);
-    return data;
+    console.log(chalk.greenBright(`${node.path} had loaded Successfully`));
 }
 
 export async function loadDir(
     dir: string,
     context: LoadContext
-): Promise<CommandFile[] | undefined> {
-    const files = readdirSync(dir);
-    const meta = findMetaFile(dir, files);
+): Promise<Folder | Group | undefined> {
+    const node = await readDir(dir);
+    await loadNode(node, context);
 
-    const loaded: CommandFile[] = [];
-
-    if (meta == null) {
-        for (const file of files) {
-            const data = await loadFileOrDir(join(dir, file), context);
-            if (data == null) return [];
-
-            loaded.push(...data);
-        }
-    } else {
-        const data = await loadFile(meta, context);
-
-        if (data == null) return [];
-
-        loaded.push(data);
-    }
-
-    return loaded;
-}
-
-async function loadFileOrDir(path: string, context: LoadContext) {
-    if (lstatSync(path).isDirectory()) {
-        const data = await loadDir(path, context);
-        if (data == null) return;
-
-        return data;
-    } else {
-        const data = await loadFile(path, context);
-        if (data == null) return;
-
-        return [data];
-    }
+    return node;
 }

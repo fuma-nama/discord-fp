@@ -15,9 +15,6 @@ export default slash({
         enabled: options.boolean({
             required: true,
             description: "Enabled",
-            descriptions: {
-                "en-GB": "Hello",
-            },
         }),
         number: options.number({
             description: "Example number",

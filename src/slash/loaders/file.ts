@@ -3,7 +3,8 @@ import {
     SlashCommandSubcommandBuilder,
 } from "discord.js";
 import { parse } from "path";
-import { CommandFile, LoadContext } from "../../core";
+import { FileLoader, LoadContext } from "../../core";
+import { Node } from "../../types";
 import { createSlashBuilder, createBaseBuilder } from "../../utils";
 import { Option } from "../options";
 import { SlashCommandConfig } from "../slash";
@@ -21,7 +22,7 @@ function initOptions<B extends SharedSlashCommandOptions>(
     return builder;
 }
 
-export class SlashCommandFile extends CommandFile {
+export class SlashCommandFile extends FileLoader {
     readonly config: SlashCommandConfig<any>;
 
     constructor(config: SlashCommandConfig<any>) {
@@ -29,19 +30,19 @@ export class SlashCommandFile extends CommandFile {
         this.config = config;
     }
 
-    override load(file: string, context: LoadContext) {
+    override load({ path }: Node, context: LoadContext) {
         const config = this.config;
-        const { name } = parse(file);
+        const { name } = parse(path);
 
         let command = createSlashBuilder(name, config);
         command = initOptions(command, config);
 
-        context.client.application?.commands.create(command);
+        context.commands.push(command);
     }
 
-    buildSubCommand(file: string): SlashCommandSubcommandBuilder {
+    buildSubCommand(self: Node): SlashCommandSubcommandBuilder {
         const config = this.config;
-        const { name } = parse(file);
+        const { name } = parse(self.path);
 
         let command = createBaseBuilder(
             new SlashCommandSubcommandBuilder(),
