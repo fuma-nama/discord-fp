@@ -1,11 +1,11 @@
-import { Group } from "@types";
+import { Group } from "@/types";
 import { SlashCommandSubcommandGroupBuilder } from "discord.js";
 import { parse } from "path";
 import { GroupLoader, LoadContext } from "../../core";
 import { createSlashBuilder, createBaseBuilder } from "../../utils";
 import { SlashCommandFile } from "./file";
 import { GroupMetaConfig } from "../slash";
-import { logNode } from "@/utils/log";
+import { debugNode } from "@/utils/log";
 
 export class SlashCommandGroupFile extends GroupLoader {
     readonly config: GroupMetaConfig;
@@ -21,22 +21,36 @@ export class SlashCommandGroupFile extends GroupLoader {
         const command = createSlashBuilder(name, config);
 
         for (const node of self.nodes) {
-            if (node.type === "file") {
-                const loader = node.loader as SlashCommandFile;
+            if (
+                node.type === "file" &&
+                node.loader instanceof SlashCommandFile
+            ) {
+                const loader = node.loader;
+                const subcommand = loader.buildSubCommand(node);
 
-                command.addSubcommand(loader.buildSubCommand(node));
-                logNode(node, "Subcommand Loaded");
+                command.addSubcommand(subcommand);
+                context.listeners.slash.set(
+                    [command.name, null, subcommand.name],
+                    (e) => loader.onEvent(e)
+                );
+                debugNode(node, "Subcommand Loaded");
 
                 continue;
             }
 
-            if (node.type === "group") {
-                const loader = node.meta.loader as SlashCommandGroupFile;
-
-                command.addSubcommandGroup(
-                    await loader.buildSubCommandGroup(node)
+            if (
+                node.type === "group" &&
+                node.meta.loader instanceof SlashCommandGroupFile
+            ) {
+                const loader = node.meta.loader;
+                const group = loader.loadSubCommandGroup(
+                    node,
+                    context,
+                    command.name
                 );
-                logNode(node, "Subcommand Group Loaded");
+
+                command.addSubcommandGroup(group);
+                debugNode(node, "Subcommand Group Loaded");
                 continue;
             }
 
@@ -46,11 +60,11 @@ export class SlashCommandGroupFile extends GroupLoader {
         context.commands.push(command);
     }
 
-    async buildSubCommandGroup(self: Group) {
+    loadSubCommandGroup(self: Group, context: LoadContext, parent: string) {
         const config = this.config;
         const { name } = parse(self.path);
 
-        const command = createBaseBuilder(
+        const group = createBaseBuilder(
             new SlashCommandSubcommandGroupBuilder(),
             name,
             config
@@ -61,12 +75,19 @@ export class SlashCommandGroupFile extends GroupLoader {
                 throw new Error(`Must be a file ${node.path}`);
 
             if (node.loader instanceof SlashCommandFile) {
-                command.addSubcommand(node.loader.buildSubCommand(node));
+                const loader = node.loader;
+                const subcommand = loader.buildSubCommand(node);
 
-                logNode(node, `Subcommand in ${name} had been Loaded`);
+                group.addSubcommand(subcommand);
+                context.listeners.slash.set(
+                    [parent, group.name, subcommand.name],
+                    (e) => loader.onEvent(e)
+                );
+
+                debugNode(node, `Subcommand in ${name} had been Loaded`);
             }
         }
 
-        return command;
+        return group;
     }
 }

@@ -26,11 +26,6 @@ export default slash({
         }),
     },
     execute: async ({ event, options }) => {
-        const a = event.options.getMentionable("", true);
-        if ("member" in a) {
-            a.member;
-        }
-
-        await event.reply(`Hello, ${options.name}`);
+        await event.reply(`Hello World, ${options.name}`);
     },
 });

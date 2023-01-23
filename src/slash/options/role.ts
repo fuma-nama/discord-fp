@@ -10,7 +10,7 @@ export function role<Required extends boolean = true>(
 ) {
     return makeOption<Role | APIRole, Required>(config, {
         parse(value) {
-            return value.role ?? null;
+            return value?.role ?? null;
         },
 
         build(name) {

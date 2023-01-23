@@ -13,7 +13,7 @@ export function boolean<Required extends boolean = true>(
             return createBuilder(new SlashCommandBooleanOption(), name, config);
         },
         parse(value) {
-            return (value.value as boolean) ?? null;
+            return (value?.value as boolean) ?? null;
         },
     });
 }

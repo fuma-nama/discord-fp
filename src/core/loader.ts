@@ -1,7 +1,7 @@
-import { Group, Node, Folder } from "@types";
+import { ListenerModule } from "@/listener/module";
+import { Group, Node, Folder } from "@/types";
 import { ApplicationCommandDataResolvable, Client } from "discord.js";
 import { readDir } from "../utils";
-import chalk from "chalk";
 
 export abstract class FileLoader {
     /**
@@ -21,6 +21,7 @@ export abstract class GroupLoader extends FileLoader {
 export type LoadContext = {
     client: Client;
     commands: ApplicationCommandDataResolvable[];
+    listeners: ListenerModule;
 };
 
 export async function loadNode(node: Node, context: LoadContext) {
@@ -42,7 +43,7 @@ export async function loadNode(node: Node, context: LoadContext) {
         }
     }
 
-    console.log(chalk.greenBright(`${node.path} had loaded Successfully`));
+    console.log(`${node.path} had loaded Successfully`);
 }
 
 export async function loadDir(

@@ -10,7 +10,7 @@ export function int<Required extends boolean = true>(
 ) {
     return makeOption<number, Required>(config, {
         parse(v) {
-            return (v.value as number) ?? null;
+            return (v?.value as number) ?? null;
         },
         build(name) {
             return createNumberBuilder(

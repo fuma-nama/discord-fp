@@ -39,6 +39,8 @@ export function mention<Required extends boolean = true>(
             );
         },
         parse(value) {
+            if (value == null) return null;
+
             if (value.member != null)
                 return {
                     type: "member",

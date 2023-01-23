@@ -33,7 +33,7 @@ export function channel<Required extends boolean = true>(
             return builder;
         },
         parse(value) {
-            return value.channel ?? null;
+            return value?.channel ?? null;
         },
     });
 }

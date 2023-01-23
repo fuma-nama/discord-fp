@@ -1,4 +1,5 @@
 import {
+    ChatInputCommandInteraction,
     SharedSlashCommandOptions,
     SlashCommandSubcommandBuilder,
 } from "discord.js";
@@ -24,10 +25,28 @@ function initOptions<B extends SharedSlashCommandOptions>(
 
 export class SlashCommandFile extends FileLoader {
     readonly config: SlashCommandConfig<any>;
+    private readonly optionMap: [string, Option<unknown, boolean>][];
 
     constructor(config: SlashCommandConfig<any>) {
         super();
         this.config = config;
+        this.optionMap = Object.entries<Option<unknown, boolean>>(
+            this.config.options
+        );
+    }
+
+    onEvent(e: ChatInputCommandInteraction) {
+        const options: any = {};
+
+        for (const [key, option] of this.optionMap) {
+            const v = e.options.get(key, option.config.required);
+
+            options[key] = option.parse(v);
+        }
+        this.config.execute({
+            event: e,
+            options: options,
+        });
     }
 
     override load({ path }: Node, context: LoadContext) {
@@ -37,6 +56,9 @@ export class SlashCommandFile extends FileLoader {
         let command = createSlashBuilder(name, config);
         command = initOptions(command, config);
 
+        context.listeners.slash.set([command.name, null, null], (e) =>
+            this.onEvent(e)
+        );
         context.commands.push(command);
     }
 

@@ -30,12 +30,12 @@ export abstract class Option<T, Required extends true | false> {
     }
 
     abstract build(name: string): ApplicationCommandOptionBase;
-    abstract parse(value: CommandInteractionOption): T;
+    abstract parse(value: CommandInteractionOption | null): T;
 }
 
 export type OptionExtend<T> = {
     build: (name: string) => ApplicationCommandOptionBase;
-    parse: (value: CommandInteractionOption) => T | null;
+    parse: (value: CommandInteractionOption | null) => T | null;
 };
 
 export function makeOption<T, Required extends boolean = true>(

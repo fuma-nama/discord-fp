@@ -17,7 +17,7 @@ export function attachment<Required extends boolean = true>(
             );
         },
         parse(v) {
-            return v.attachment ?? null;
+            return v?.attachment ?? null;
         },
     });
 }

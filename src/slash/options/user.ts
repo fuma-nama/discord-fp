@@ -1,10 +1,4 @@
-import {
-    APIUser,
-    CacheType,
-    CommandInteractionOption,
-    SlashCommandUserOption,
-    User,
-} from "discord.js";
+import { APIUser, SlashCommandUserOption, User } from "discord.js";
 import { makeOption } from "../options";
 import { BaseOptionConfig, createBuilder } from "./base";
 
@@ -19,8 +13,8 @@ export function user<Required extends boolean = true>(
             return createBuilder(new SlashCommandUserOption(), name, config);
         },
 
-        parse(value: CommandInteractionOption<CacheType>) {
-            return value.user ?? null;
+        parse(value) {
+            return value?.user ?? null;
         },
     });
 }

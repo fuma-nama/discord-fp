@@ -9,7 +9,6 @@
         "strictNullChecks": true,
         "paths": {
             "discord-fp": ["./src"],
-            "@types": ["./src/types.ts"],
             "@/*": ["./src/*"]
         }
     },

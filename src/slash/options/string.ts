@@ -21,7 +21,7 @@ export function string<Required extends boolean = true>(
 ) {
     return makeOption<string, Required>(config, {
         parse(v) {
-            return (v.value as string) ?? null;
+            return (v?.value as string) ?? null;
         },
         build(name: string) {
             const builder = createBuilder(

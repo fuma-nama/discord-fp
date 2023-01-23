@@ -31,7 +31,7 @@ export function number<Required extends true | false = true>(
             );
         },
         parse(v) {
-            return (v.value as number) ?? null;
+            return (v?.value as number) ?? null;
         },
     });
 }
