@@ -3,7 +3,10 @@ import { Client } from "discord.js";
 import { LoadContext, loadDir } from "./loader";
 
 export type Config = {
-    dir: string;
+    /**
+     * where to load commands
+     */
+    dir: string | string[];
     register?: {
         /**
          * if disabled, Skip registering commands
@@ -24,7 +27,11 @@ export async function start(client: Client, config: Config) {
     };
     console.time(ready);
 
-    await loadDir(config.dir, context);
+    console.log("Loading commands...");
+    const load = Array.isArray(config.dir) ? config.dir : [config.dir];
+    for (const dir of load) {
+        await loadDir(dir, context);
+    }
 
     await registerCommands(config, context);
 
