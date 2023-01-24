@@ -22,6 +22,9 @@ export type OptionExtend<T> = {
     parse: (value: CommandInteractionOption | null) => T | null;
 };
 
+export type MakeOption<T, Required extends boolean> = Option<
+    Required extends true ? T : T | null
+>;
 export function makeOption<T, Required extends boolean = true>(
     config: BaseOptionConfig<Required>,
     option: OptionExtend<T>

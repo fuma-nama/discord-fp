@@ -1,5 +1,5 @@
 import { SlashCommandBooleanOption } from "discord.js";
-import { makeOption } from "../options";
+import { MakeOption, makeOption } from "../options";
 import { BaseOptionConfig, createBuilder } from "./base";
 
 export type BooleanOptionConfig<Required extends boolean> =
@@ -7,8 +7,8 @@ export type BooleanOptionConfig<Required extends boolean> =
 
 export function boolean<Required extends boolean = true>(
     config: BooleanOptionConfig<Required>
-) {
-    return makeOption<boolean, Required>(config, {
+): MakeOption<boolean, Required> {
+    return makeOption(config, {
         build(name) {
             return createBuilder(new SlashCommandBooleanOption(), name, config);
         },

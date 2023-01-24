@@ -1,5 +1,5 @@
 import { APIRole, Role, SlashCommandRoleOption } from "discord.js";
-import { makeOption } from "../options";
+import { makeOption, MakeOption } from "../options";
 import { BaseOptionConfig, createBuilder } from "./base";
 
 export type RoleOptionConfig<Required extends boolean> =
@@ -7,8 +7,8 @@ export type RoleOptionConfig<Required extends boolean> =
 
 export function role<Required extends boolean = true>(
     config: RoleOptionConfig<Required>
-) {
-    return makeOption<Role | APIRole, Required>(config, {
+): MakeOption<Role | APIRole, Required> {
+    return makeOption(config, {
         parse(value) {
             return value?.role ?? null;
         },

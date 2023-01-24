@@ -2,14 +2,19 @@
     "name": "discord-fp",
     "version": "1.0.0",
     "description": "A Beautiful Application Command Framework based on Discord.js",
-    "main": "./src/index.ts",
+    "main": "dist/index.js",
+    "types": "dist/index.d.ts",
     "scripts": {
-        "dev": "ts-node ./test/index.ts"
+        "dev": "ts-node ./test/index.ts",
+        "build": "tsc -p tsconfig-build.json && tsc-alias"
     },
     "keywords": [
         "discord.js",
         "slash command",
         "application command"
+    ],
+    "files": [
+        "./dist"
     ],
     "author": "Money SonMooSans",
     "repository": "github:SonMooSans/discord-fp",
@@ -19,6 +24,7 @@
         "@types/node": "^18.11.18",
         "discord.js": "^14.7.1",
         "dotenv": "^16.0.3",
+        "tsc-alias": "^1.8.2",
         "tsconfig-paths": "^4.1.2",
         "typescript": "^4.9.4"
     },

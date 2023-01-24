@@ -1,5 +1,5 @@
 import { SlashCommandIntegerOption } from "discord.js";
-import { makeOption } from "../options";
+import { MakeOption, makeOption } from "../options";
 import { createNumberBuilder, NumberOptionConfig } from "./number";
 
 export type IntOptionConfig<Required extends boolean> =
@@ -7,8 +7,8 @@ export type IntOptionConfig<Required extends boolean> =
 
 export function int<Required extends boolean = true>(
     config: IntOptionConfig<Required>
-) {
-    return makeOption<number, Required>(config, {
+): MakeOption<number, Required> {
+    return makeOption(config, {
         parse(v) {
             return (v?.value as number) ?? null;
         },

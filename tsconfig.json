@@ -1,5 +1,7 @@
 {
     "compilerOptions": {
+        "outDir": "dist",
+        "declaration": true,
         "esModuleInterop": true,
         "allowSyntheticDefaultImports": true,
         "lib": ["ES2022"],

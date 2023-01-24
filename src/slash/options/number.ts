@@ -2,7 +2,7 @@ import {
     SlashCommandIntegerOption,
     SlashCommandNumberOption,
 } from "discord.js";
-import { makeOption } from "../options";
+import { makeOption, MakeOption } from "../options";
 import {
     BaseOptionConfig,
     ChoicesOptionConfig,
@@ -11,7 +11,7 @@ import {
     buildChoices,
 } from "./base";
 
-export type NumberOptionConfig<Required extends true | false> =
+export type NumberOptionConfig<Required extends boolean> =
     BaseOptionConfig<Required> &
         ChoicesOptionConfig<number> &
         AutoCompleteOptionConfig & {
@@ -19,10 +19,10 @@ export type NumberOptionConfig<Required extends true | false> =
             max?: number;
         };
 
-export function number<Required extends true | false = true>(
+export function number<Required extends boolean = true>(
     config: NumberOptionConfig<Required>
-) {
-    return makeOption<number, Required>(config, {
+): MakeOption<number, Required> {
+    return makeOption(config, {
         build(name) {
             return createNumberBuilder(
                 new SlashCommandNumberOption(),

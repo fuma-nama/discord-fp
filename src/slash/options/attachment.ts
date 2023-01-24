@@ -1,5 +1,5 @@
 import { Attachment, SlashCommandAttachmentOption } from "discord.js";
-import { makeOption } from "../options";
+import { makeOption, MakeOption } from "../options";
 import { BaseOptionConfig, createBuilder } from "./base";
 
 export type AttachmentOptionConfig<Required extends boolean> =
@@ -7,8 +7,8 @@ export type AttachmentOptionConfig<Required extends boolean> =
 
 export function attachment<Required extends boolean = true>(
     config: AttachmentOptionConfig<Required>
-) {
-    return makeOption<Attachment, Required>(config, {
+): MakeOption<Attachment, Required> {
+    return makeOption(config, {
         build(name) {
             return createBuilder(
                 new SlashCommandAttachmentOption(),

@@ -4,7 +4,7 @@ import {
     GuildBasedChannel,
     SlashCommandChannelOption,
 } from "discord.js";
-import { makeOption } from "../options";
+import { makeOption, MakeOption } from "../options";
 import { BaseOptionConfig, createBuilder } from "./base";
 
 export type ChannelOptionConfig<Required extends boolean> =
@@ -14,11 +14,8 @@ export type ChannelOptionConfig<Required extends boolean> =
 
 export function channel<Required extends boolean = true>(
     config: ChannelOptionConfig<Required>
-) {
-    return makeOption<
-        APIInteractionDataResolvedChannel | GuildBasedChannel,
-        Required
-    >(config, {
+): MakeOption<APIInteractionDataResolvedChannel | GuildBasedChannel, Required> {
+    return makeOption(config, {
         build(name) {
             const builder = createBuilder(
                 new SlashCommandChannelOption(),

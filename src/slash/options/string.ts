@@ -1,5 +1,5 @@
 import { SlashCommandStringOption } from "discord.js";
-import { makeOption } from "../options";
+import { MakeOption, makeOption } from "../options";
 import {
     AutoCompleteOptionConfig,
     BaseOptionConfig,
@@ -18,8 +18,8 @@ export type StringOptionConfig<Required extends boolean> =
 
 export function string<Required extends boolean = true>(
     config: StringOptionConfig<Required>
-) {
-    return makeOption<string, Required>(config, {
+): MakeOption<string, Required> {
+    return makeOption(config, {
         parse(v) {
             return (v?.value as string) ?? null;
         },

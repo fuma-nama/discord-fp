@@ -7,7 +7,7 @@ import {
     SlashCommandMentionableOption,
     User,
 } from "discord.js";
-import { makeOption } from "../options";
+import { MakeOption, makeOption } from "../options";
 import { BaseOptionConfig, createBuilder } from "./base";
 
 export type ParsedMentionValue =
@@ -29,8 +29,8 @@ export type MentionOptionConfig<Required extends boolean> =
 
 export function mention<Required extends boolean = true>(
     config: MentionOptionConfig<Required>
-) {
-    return makeOption<ParsedMentionValue, Required>(config, {
+): MakeOption<ParsedMentionValue, Required> {
+    return makeOption(config, {
         build(name) {
             return createBuilder(
                 new SlashCommandMentionableOption(),
