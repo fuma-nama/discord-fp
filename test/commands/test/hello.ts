@@ -1,5 +1,4 @@
 import { options, slash } from "discord-fp";
-import { CommandInteractionOption, CacheType } from "discord.js";
 
 /**
  * Typesafe discord.js command framework

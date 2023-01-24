@@ -15,6 +15,4 @@ client.on("ready", () => {
     });
 });
 
-client.login(
-    "OTA3OTU1NzgxOTcyOTE4Mjgz.G3s6Qk.yWjaf63NSNTXs4yn3hgemPLH5bIKEqNt9-X_fA"
-);
+client.login(process.env["TOKEN"] as string);

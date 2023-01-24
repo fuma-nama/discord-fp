@@ -5,12 +5,7 @@ import {
     SharedSlashCommandOptions,
     SlashCommandSubcommandBuilder,
 } from "discord.js";
-import {
-    ApplicationCommandConfig,
-    DescriptionConfig,
-    File,
-    Node,
-} from "../types";
+import { ApplicationCommandConfig, DescriptionConfig, File } from "../types";
 import type { InferOptionType, Option } from "./option";
 
 type SlashOptionsConfig = { [key: string]: Option<any> };
@@ -31,7 +26,7 @@ export type SlashCommandInteractionContext<O extends SlashOptionsConfig> = {
     };
 };
 
-export function slash<Options extends SlashOptionsConfig>(
+export function slash<Options extends SlashOptionsConfig = never>(
     config: SlashCommandConfig<Options>
 ): SlashCommandFile {
     return new SlashCommandFile(config);

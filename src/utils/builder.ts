@@ -38,6 +38,5 @@ export function createContextBuilder(
         .setName(config.name ?? name)
         .setNameLocalizations(config.names ?? {})
         .setDMPermission(config.scope?.dm)
-        .setDMPermission(config.scope?.dm)
         .setDefaultMemberPermissions(config.scope?.member);
 }

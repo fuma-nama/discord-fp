@@ -21,7 +21,14 @@ export type ApplicationCommandConfig = {
      * It will be ignored if used inside a command group
      */
     scope?: Partial<{
+        /**
+         * DM permissions
+         */
         dm: boolean;
+
+        /**
+         * Member default permissions
+         */
         member: number | string | bigint;
     }>;
 };
