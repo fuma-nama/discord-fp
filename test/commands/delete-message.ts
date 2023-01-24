@@ -2,7 +2,7 @@ import { message } from "discord-fp";
 
 export default message({
     name: "Delete Message",
-    execute(e) {
-        console.log(e);
+    async execute(e) {
+        await e.reply("I don't wanna delete message!");
     },
 });

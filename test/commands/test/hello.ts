@@ -1,4 +1,5 @@
 import { options, slash } from "discord-fp";
+import { CommandInteractionOption, CacheType } from "discord.js";
 
 /**
  * Typesafe discord.js command framework
@@ -6,12 +7,16 @@ import { options, slash } from "discord-fp";
 export default slash({
     description: "Say Hello to you",
     options: {
-        name: options.string({
-            description: "Your name",
-            choices: {
-                hello: { value: "Hello World" },
-            },
-        }),
+        name: options
+            .string({
+                description: "Your name",
+                choices: {
+                    hello: { value: "Hello World" },
+                },
+            })
+            .transform((v) => {
+                return `Hello ${v}`;
+            }),
         enabled: options.boolean({
             required: true,
             description: "Enabled",
@@ -23,12 +28,16 @@ export default slash({
             description: "Example number",
             required: true,
         }),
-        user: options.user({
-            description: "Ping user",
-            required: false,
-        }),
+        user: options
+            .user({
+                description: "Ping user",
+                required: false,
+            })
+            .transform((v) => {
+                return v?.username;
+            }),
     },
     execute: async ({ event, options }) => {
-        await event.reply(`Hello, ${options.name}`);
+        await event.reply(`Hello, ${options.name} ${options.user}`);
     },
 });

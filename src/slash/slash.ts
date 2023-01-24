@@ -1,27 +1,28 @@
 import { ChatInputCommandInteraction } from "discord.js";
 import { ApplicationCommandConfig, DescriptionConfig } from "../types";
 import { SlashCommandFile } from "./loaders";
-import { InferOptionType, SlashOptions, SlashOptionsConfig } from "./options";
 import { SlashCommandGroupFile } from "./loaders";
+import type { InferOptionType, Option } from "./option";
+
+type SlashOptionsConfig = { [key: string]: Option<any> };
 
 export type SlashCommandConfig<O extends SlashOptionsConfig> =
     DescriptionConfig &
         ApplicationCommandConfig & {
             options?: O;
-            execute: SlashCommandExecutor<SlashOptions<O>>;
+            execute: SlashCommandExecutor<O>;
         };
 
-export type SlashCommandExecutor<O extends SlashOptions<any>> = (context: {
+export type SlashCommandExecutor<O extends SlashOptionsConfig> = (context: {
     event: ChatInputCommandInteraction;
     options: {
         [K in keyof O]: InferOptionType<O[K]>;
     };
 }) => void;
 
-export function slash<
-    OptionsConfig extends SlashOptionsConfig,
-    Options extends SlashOptions<OptionsConfig>
->(config: SlashCommandConfig<Options>): SlashCommandFile {
+export function slash<Options extends SlashOptionsConfig>(
+    config: SlashCommandConfig<Options>
+): SlashCommandFile {
     return new SlashCommandFile(config);
 }
 

@@ -1,5 +1,5 @@
 import { Attachment, SlashCommandAttachmentOption } from "discord.js";
-import { makeOption, Option } from "../options";
+import { makeOption } from "../options";
 import { BaseOptionConfig, createBuilder } from "./base";
 
 export type AttachmentOptionConfig<Required extends boolean> =

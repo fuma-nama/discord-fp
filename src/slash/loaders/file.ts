@@ -4,10 +4,10 @@ import {
     SlashCommandSubcommandBuilder,
 } from "discord.js";
 import { parse } from "path";
-import { FileLoader, LoadContext } from "../../core";
-import { Node } from "../../types";
-import { createSlashBuilder, createBaseBuilder } from "../../utils";
-import { Option } from "../options";
+import { FileLoader, LoadContext } from "@/core";
+import { Node } from "@/types";
+import { createSlashBuilder, createBaseBuilder } from "@/utils";
+import { Option } from "../option";
 import { SlashCommandConfig } from "../slash";
 
 function initOptions<B extends SharedSlashCommandOptions>(
@@ -16,7 +16,7 @@ function initOptions<B extends SharedSlashCommandOptions>(
 ): B {
     const options = config.options ?? {};
 
-    for (const [name, info] of Object.entries<Option<any, any>>(options)) {
+    for (const [name, info] of Object.entries<Option<never>>(options)) {
         builder.options.push(info.build(name));
     }
 
@@ -25,14 +25,12 @@ function initOptions<B extends SharedSlashCommandOptions>(
 
 export class SlashCommandFile extends FileLoader {
     readonly config: SlashCommandConfig<any>;
-    readonly optionMap: [string, Option<unknown, boolean>][];
+    readonly optionMap: [string, Option<never>][];
 
     constructor(config: SlashCommandConfig<any>) {
         super();
         this.config = config;
-        this.optionMap = Object.entries<Option<unknown, boolean>>(
-            this.config.options
-        );
+        this.optionMap = Object.entries<Option<never>>(this.config.options);
     }
 
     onEvent = (e: ChatInputCommandInteraction) => {
