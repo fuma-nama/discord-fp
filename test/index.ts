@@ -1,5 +1,5 @@
 import { Client, GatewayIntentBits } from "discord.js";
-import { start } from "../src";
+import { start } from "discord-fp";
 import { join } from "path";
 
 const client = new Client({ intents: [GatewayIntentBits.Guilds] });
