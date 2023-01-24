@@ -23,8 +23,6 @@ export class ListenerModule {
     >();
 
     load(client: Client) {
-        console.log(this.slash.entries());
-
         client.on("interactionCreate", (e) => {
             if (e.isChatInputCommand()) {
                 const key: SlashCommandKey = [

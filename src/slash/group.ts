@@ -1,16 +1,29 @@
-import { Group, Node } from "@/types";
+import {
+    ApplicationCommandConfig,
+    DescriptionConfig,
+    Group,
+    Node,
+} from "@/types";
 import { SlashCommandSubcommandGroupBuilder } from "discord.js";
 import { parse } from "path";
-import { GroupLoader, LoadContext } from "../../core";
-import { createSlashBuilder, createBaseBuilder } from "../../utils";
-import { SlashCommandFile } from "./file";
-import { GroupMetaConfig } from "../slash";
 import { debugNode } from "@/utils/log";
+import { GroupLoader, LoadContext } from "@/core";
+import { createSlashBuilder, createBaseBuilder } from "@/utils";
+import { SlashCommandFile } from "./slash";
+
+export type SlashGroupConfig = ApplicationCommandConfig & DescriptionConfig;
+
+/**
+ * Register a command group
+ */
+export function group(config: SlashGroupConfig): SlashCommandGroupFile {
+    return new SlashCommandGroupFile(config);
+}
 
 export class SlashCommandGroupFile extends GroupLoader {
-    readonly config: GroupMetaConfig;
+    readonly config: SlashGroupConfig;
 
-    constructor(config: GroupMetaConfig) {
+    constructor(config: SlashGroupConfig) {
         super();
         this.config = config;
     }
