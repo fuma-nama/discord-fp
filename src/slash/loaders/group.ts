@@ -1,4 +1,4 @@
-import { Group } from "@/types";
+import { Group, Node } from "@/types";
 import { SlashCommandSubcommandGroupBuilder } from "discord.js";
 import { parse } from "path";
 import { GroupLoader, LoadContext } from "../../core";
@@ -26,15 +26,13 @@ export class SlashCommandGroupFile extends GroupLoader {
                 node.loader instanceof SlashCommandFile
             ) {
                 const loader = node.loader;
-                const subcommand = loader.buildSubCommand(node);
+                const subcommand = loader.loadSubCommand(node, context, [
+                    command.name,
+                    null,
+                ]);
 
                 command.addSubcommand(subcommand);
-                context.listeners.slash.set(
-                    [command.name, null, subcommand.name],
-                    loader.onEvent
-                );
                 debugNode(node, "Subcommand Loaded");
-
                 continue;
             }
 
@@ -54,7 +52,7 @@ export class SlashCommandGroupFile extends GroupLoader {
                 continue;
             }
 
-            throw new Error(`Invalid file ${node}`);
+            errorInvalidFile(node);
         }
 
         context.commands.push(command);
@@ -71,23 +69,28 @@ export class SlashCommandGroupFile extends GroupLoader {
         );
 
         for (const node of self.nodes) {
-            if (node.type !== "file")
-                throw new Error(`Must be a file ${node.path}`);
-
-            if (node.loader instanceof SlashCommandFile) {
+            if (
+                node.type === "file" &&
+                node.loader instanceof SlashCommandFile
+            ) {
                 const loader = node.loader;
-                const subcommand = loader.buildSubCommand(node);
+                const subcommand = loader.loadSubCommand(node, context, [
+                    parent,
+                    group.name,
+                ]);
 
                 group.addSubcommand(subcommand);
-                context.listeners.slash.set(
-                    [parent, group.name, subcommand.name],
-                    loader.onEvent
-                );
-
                 debugNode(node, `Subcommand in ${name} had been Loaded`);
+                continue;
             }
+
+            errorInvalidFile(node);
         }
 
         return group;
     }
+}
+
+function errorInvalidFile(node: Node) {
+    throw new Error(`Invalid file ${node.path} (${node.type})`);
 }

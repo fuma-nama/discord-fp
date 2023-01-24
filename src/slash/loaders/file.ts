@@ -58,17 +58,22 @@ export class SlashCommandFile extends FileLoader {
         context.commands.push(command);
     }
 
-    buildSubCommand(self: Node): SlashCommandSubcommandBuilder {
+    loadSubCommand(
+        self: Node,
+        context: LoadContext,
+        key: [command: string, group: string | null]
+    ): SlashCommandSubcommandBuilder {
         const config = this.config;
         const { name } = parse(self.path);
 
-        let command = createBaseBuilder(
+        let builder = createBaseBuilder(
             new SlashCommandSubcommandBuilder(),
             name,
             config
         );
-        command = initOptions(command, config);
+        builder = initOptions(builder, config);
 
-        return command;
+        context.listeners.slash.set([...key, builder.name], this.onEvent);
+        return builder;
     }
 }
