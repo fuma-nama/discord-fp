@@ -4,7 +4,14 @@ import { LoadContext, loadDir } from "./loader";
 
 export type Config = {
     dir: string;
-    skipRegister?: boolean;
+    register?: {
+        /**
+         * if disabled, Skip registering commands
+         *
+         * default: true
+         */
+        enabled?: boolean;
+    };
 };
 
 const ready = "Ready";
@@ -19,20 +26,28 @@ export async function start(client: Client, config: Config) {
 
     await loadDir(config.dir, context);
 
-    if (config.skipRegister !== true) {
+    await registerCommands(config, context);
+
+    console.log("Loading event listeners...");
+    context.listeners.load(client);
+
+    console.timeEnd(ready);
+}
+
+async function registerCommands(config: Config, context: LoadContext) {
+    const register = {
+        enabled: config.register?.enabled ?? true,
+    };
+
+    if (register.enabled === true) {
         const application = context.client.application;
         console.log("Registering commands...");
 
         if (application == null)
             throw new Error("Client is not ready to register commands");
 
-        for (const command of context.commands) {
-            await application.commands.create(command);
-        }
+        await application.commands.set(context.commands);
+    } else {
+        console.log("Commands registration skipped");
     }
-
-    console.log("Loading event listeners...");
-    context.listeners.load(client);
-
-    console.timeEnd(ready);
 }

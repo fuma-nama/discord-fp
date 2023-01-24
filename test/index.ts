@@ -9,7 +9,9 @@ client.on("ready", () => {
 
     start(client, {
         dir: join(__dirname, "commands"),
-        skipRegister: true,
+        register: {
+            enabled: false,
+        },
     });
 });
 
