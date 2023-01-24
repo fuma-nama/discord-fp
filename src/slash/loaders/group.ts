@@ -31,7 +31,7 @@ export class SlashCommandGroupFile extends GroupLoader {
                 command.addSubcommand(subcommand);
                 context.listeners.slash.set(
                     [command.name, null, subcommand.name],
-                    (e) => loader.onEvent(e)
+                    loader.onEvent
                 );
                 debugNode(node, "Subcommand Loaded");
 
@@ -81,7 +81,7 @@ export class SlashCommandGroupFile extends GroupLoader {
                 group.addSubcommand(subcommand);
                 context.listeners.slash.set(
                     [parent, group.name, subcommand.name],
-                    (e) => loader.onEvent(e)
+                    loader.onEvent
                 );
 
                 debugNode(node, `Subcommand in ${name} had been Loaded`);

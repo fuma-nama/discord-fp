@@ -23,17 +23,24 @@ export class ListenerModule {
     >();
 
     load(client: Client) {
+        console.log(this.slash.entries());
+
         client.on("interactionCreate", (e) => {
             if (e.isChatInputCommand()) {
                 const key: SlashCommandKey = [
                     e.commandName,
-                    e.options.getSubcommandGroup(),
-                    e.options.getSubcommand(),
+                    e.options.getSubcommandGroup(false),
+                    e.options.getSubcommand(false),
                 ];
+
                 const handler = this.slash.get(key);
 
                 if (handler == null) {
-                    console.warn("Unhandled command", key, this.slash.keys());
+                    console.warn(
+                        "Unhandled slash command",
+                        key,
+                        this.slash.keys()
+                    );
                 }
                 return handler?.(e);
             }
@@ -54,5 +61,3 @@ export class ListenerModule {
         });
     }
 }
-
-export default ListenerModule;

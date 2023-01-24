@@ -15,7 +15,7 @@ export function findMetaFile(
     const nodes: string[] = [];
 
     for (const file of files) {
-        if (parse(file).name === "_meta") {
+        if (meta == null && parse(file).name === "_meta") {
             meta = file;
         } else {
             nodes.push(file);
@@ -56,11 +56,10 @@ export async function readMeta(path: string): Promise<Meta> {
 export async function readDir(dir: string): Promise<Folder | Group> {
     const [meta, files] = findMetaFile(readdirSync(dir));
 
-    const nodes = await Promise.all(
-        files.flatMap(async (file) => {
-            return await readNode(join(dir, file));
-        })
-    );
+    const nodes: Node[] = [];
+    for (const file of files) {
+        nodes.push(await readNode(join(dir, file)));
+    }
 
     if (meta == null) {
         return {

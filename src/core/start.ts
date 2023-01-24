@@ -1,4 +1,4 @@
-import ListenerModule from "@/listener/module";
+import { ListenerModule } from "@/listener/module";
 import { Client } from "discord.js";
 import { LoadContext, loadDir } from "./loader";
 
@@ -19,7 +19,7 @@ export async function start(client: Client, config: Config) {
 
     await loadDir(config.dir, context);
 
-    if (config.skipRegister === true) {
+    if (config.skipRegister !== true) {
         const application = context.client.application;
         console.log("Registering commands...");
 

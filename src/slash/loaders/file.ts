@@ -25,7 +25,7 @@ function initOptions<B extends SharedSlashCommandOptions>(
 
 export class SlashCommandFile extends FileLoader {
     readonly config: SlashCommandConfig<any>;
-    private readonly optionMap: [string, Option<unknown, boolean>][];
+    readonly optionMap: [string, Option<unknown, boolean>][];
 
     constructor(config: SlashCommandConfig<any>) {
         super();
@@ -35,7 +35,7 @@ export class SlashCommandFile extends FileLoader {
         );
     }
 
-    onEvent(e: ChatInputCommandInteraction) {
+    onEvent = (e: ChatInputCommandInteraction) => {
         const options: any = {};
 
         for (const [key, option] of this.optionMap) {
@@ -47,7 +47,7 @@ export class SlashCommandFile extends FileLoader {
             event: e,
             options: options,
         });
-    }
+    };
 
     override load({ path }: Node, context: LoadContext) {
         const config = this.config;
@@ -56,9 +56,7 @@ export class SlashCommandFile extends FileLoader {
         let command = createSlashBuilder(name, config);
         command = initOptions(command, config);
 
-        context.listeners.slash.set([command.name, null, null], (e) =>
-            this.onEvent(e)
-        );
+        context.listeners.slash.set([command.name, null, null], this.onEvent);
         context.commands.push(command);
     }
 
