@@ -5,8 +5,12 @@ import {
     SharedSlashCommandOptions,
     SlashCommandSubcommandBuilder,
 } from "discord.js";
-import { parse } from "path";
-import { ApplicationCommandConfig, DescriptionConfig, Node } from "../types";
+import {
+    ApplicationCommandConfig,
+    DescriptionConfig,
+    File,
+    Node,
+} from "../types";
 import type { InferOptionType, Option } from "./option";
 
 type SlashOptionsConfig = { [key: string]: Option<any> };
@@ -70,9 +74,8 @@ export class SlashCommandFile extends FileLoader {
         });
     };
 
-    override load({ path }: Node, context: LoadContext) {
+    override load({ name }: File, context: LoadContext) {
         const config = this.config;
-        const { name } = parse(path);
 
         let command = createSlashBuilder(name, config);
         command = initOptions(command, config);
@@ -82,12 +85,11 @@ export class SlashCommandFile extends FileLoader {
     }
 
     loadSubCommand(
-        self: Node,
+        { name }: File,
         context: LoadContext,
         key: [command: string, group: string | null]
     ): SlashCommandSubcommandBuilder {
         const config = this.config;
-        const { name } = parse(self.path);
 
         let builder = createBaseBuilder(
             new SlashCommandSubcommandBuilder(),

@@ -2,14 +2,13 @@ import {
     ContextMenuCommandInteraction,
     ContextMenuCommandType,
 } from "discord.js";
-import { parse } from "path";
 import { FileLoader, LoadContext } from "../core";
-import { ApplicationCommandConfig, Node } from "../types";
+import { ApplicationCommandConfig, File, Node } from "../types";
 import { createContextBuilder } from "../utils";
 
 export type ContextCommandConfig<E extends ContextMenuCommandInteraction> =
     ApplicationCommandConfig & {
-        execute: (e: E) => void;
+        execute: (e: E) => void | Promise<void>;
     };
 
 export abstract class ContextCommandFile<
@@ -24,14 +23,13 @@ export abstract class ContextCommandFile<
         this.type = type;
     }
 
-    override load({ path }: Node, context: LoadContext): void | Promise<void> {
+    override load({ name }: File, context: LoadContext): void | Promise<void> {
         const config = this.config;
-        const { name } = parse(path);
         const builder = createContextBuilder(name, config).setType(this.type);
 
         context.commands.push(builder);
         this.listen(builder.name, context);
     }
 
-    abstract listen(name: string, context: LoadContext);
+    abstract listen(name: string, context: LoadContext): void;
 }

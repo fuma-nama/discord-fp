@@ -1,5 +1,15 @@
-import { LocalizationMap } from "discord.js";
+import { Interaction, LocalizationMap } from "discord.js";
 import { FileLoader, GroupLoader } from "./core";
+import { Middleware } from "./middleware";
+
+export type FileExport = {
+    default?: FileLoader;
+};
+
+export type MetaExport = {
+    middleware?: (e: Interaction) => void;
+    default?: GroupLoader;
+};
 
 export type ApplicationCommandConfig = {
     name?: string;
@@ -30,6 +40,7 @@ export type Node = File | Group | Folder;
  * A file
  */
 export type File = {
+    name: string;
     type: "file";
     path: string;
     loader: FileLoader;
@@ -41,13 +52,15 @@ export type File = {
  * Notice that it's not a type of node
  */
 export type Meta = {
-    loader: GroupLoader;
+    loader?: GroupLoader;
+    middleware?: Middleware;
 };
 
 /**
  * A dir with _meta file
  */
 export type Group = {
+    name: string;
     type: "group";
     path: string;
     meta: Meta;

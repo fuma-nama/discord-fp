@@ -5,7 +5,6 @@ import {
     Node,
 } from "@/types";
 import { SlashCommandSubcommandGroupBuilder } from "discord.js";
-import { parse } from "path";
 import { debugNode } from "@/utils/log";
 import { GroupLoader, LoadContext } from "@/core";
 import { createSlashBuilder, createBaseBuilder } from "@/utils";
@@ -30,8 +29,7 @@ export class SlashCommandGroupFile extends GroupLoader {
 
     override async load(self: Group, context: LoadContext) {
         const config = this.config;
-        const { name } = parse(self.path);
-        const command = createSlashBuilder(name, config);
+        const command = createSlashBuilder(self.name, config);
 
         for (const node of self.nodes) {
             if (
@@ -71,9 +69,12 @@ export class SlashCommandGroupFile extends GroupLoader {
         context.commands.push(command);
     }
 
-    loadSubCommandGroup(self: Group, context: LoadContext, parent: string) {
+    loadSubCommandGroup(
+        { name, nodes }: Group,
+        context: LoadContext,
+        parent: string
+    ) {
         const config = this.config;
-        const { name } = parse(self.path);
 
         const group = createBaseBuilder(
             new SlashCommandSubcommandGroupBuilder(),
@@ -81,7 +82,7 @@ export class SlashCommandGroupFile extends GroupLoader {
             config
         );
 
-        for (const node of self.nodes) {
+        for (const node of nodes) {
             if (
                 node.type === "file" &&
                 node.loader instanceof SlashCommandFile

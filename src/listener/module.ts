@@ -7,6 +7,7 @@ import {
 import { MessageContextCommandKey, UserContextCommandKey } from "./context";
 import { SlashCommandKey } from "./slash";
 import HashMap from "hashmap";
+import { Middleware } from "@/middleware";
 
 export class ListenerModule {
     readonly slash = new HashMap<
@@ -21,6 +22,37 @@ export class ListenerModule {
         MessageContextCommandKey,
         (e: MessageContextMenuCommandInteraction) => void
     >();
+
+    withMiddleware(fn: Middleware | null): {
+        child: ListenerModule;
+        resolve: () => void;
+    } {
+        if (fn == null) {
+            return {
+                child: this,
+                resolve: () => {},
+            };
+        }
+
+        const child = new ListenerModule();
+        const self = this;
+        return {
+            child,
+            resolve() {
+                for (const [key, handler] of child.slash.entries()) {
+                    self.slash.set(key, (e) => fn(e, handler));
+                }
+
+                for (const [key, handler] of child.user.entries()) {
+                    self.user.set(key, (e) => fn(e, handler));
+                }
+
+                for (const [key, handler] of child.message.entries()) {
+                    self.message.set(key, (e) => fn(e, handler));
+                }
+            },
+        };
+    }
 
     load(client: Client) {
         client.on("interactionCreate", (e) => {

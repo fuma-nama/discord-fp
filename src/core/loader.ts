@@ -1,22 +1,19 @@
 import { ListenerModule } from "@/listener/module";
-import { Group, Node, Folder } from "@/types";
+import { Group, Node, Folder, File } from "@/types";
 import { ApplicationCommandDataResolvable, Client } from "discord.js";
 import { readDir } from "../utils";
 
-export abstract class FileLoader {
+export abstract class NodeLoader<T extends Node> {
     /**
      * @param self The node of current file
      * @param context
      */
-    abstract load(self: Node, context: LoadContext): void | Promise<void>;
+    abstract load(self: T, context: LoadContext): void | Promise<void>;
 }
 
-export abstract class GroupLoader extends FileLoader {
-    abstract override load(
-        self: Group,
-        context: LoadContext
-    ): void | Promise<void>;
-}
+export abstract class FileLoader extends NodeLoader<File> {}
+
+export abstract class GroupLoader extends NodeLoader<Group> {}
 
 export type LoadContext = {
     client: Client;
@@ -38,8 +35,22 @@ export async function loadNode(node: Node, context: LoadContext) {
             break;
         }
         case "group": {
-            await node.meta.loader.load(node, context);
-            break;
+            const { child: listeners, resolve } =
+                context.listeners.withMiddleware(node.meta.middleware ?? null);
+
+            if (node.meta.loader != null) {
+                await node.meta.loader.load(node, { ...context, listeners });
+                resolve();
+
+                break;
+            }
+
+            for (const child of node.nodes) {
+                await loadNode(child, { ...context, listeners });
+                resolve();
+
+                break;
+            }
         }
     }
 

@@ -1,7 +1,8 @@
+import { FileExport } from "./../types";
 import { lstatSync, readdirSync } from "fs";
 import { join, parse } from "path";
 import { FileLoader, GroupLoader } from "../core";
-import { File, Folder, Group, Meta, Node } from "../types";
+import { File, Folder, Group, Meta, MetaExport, Node } from "../types";
 
 /**
  *
@@ -34,10 +35,13 @@ export async function readNode(path: string): Promise<Node> {
 }
 
 export async function readFile(path: string): Promise<File> {
-    const loader = (await import(path)).default as FileLoader | undefined;
+    const { default: loader } = (await import(path)) as FileExport;
 
-    if (loader == null) throw new Error(`Failed to find loader ${path}`);
+    if (!(loader instanceof FileLoader))
+        throw new Error(`Invalid loader ${path}`);
+
     return {
+        name: parse(path).name,
         type: "file",
         path,
         loader: loader,
@@ -45,11 +49,17 @@ export async function readFile(path: string): Promise<File> {
 }
 
 export async function readMeta(path: string): Promise<Meta> {
-    const loader = (await import(path)).default as GroupLoader | undefined;
+    const { default: loader, middleware } = (await import(path)) as MetaExport;
 
-    if (loader == null) throw new Error(`Failed to find loader ${path}`);
+    if (middleware != null && typeof middleware !== "function")
+        throw new Error(`Invalid middleware ${path}`);
+
+    if (loader != null && !(loader instanceof GroupLoader))
+        throw new Error(`Invalid loader ${path}`);
+
     return {
-        loader: loader,
+        loader,
+        middleware,
     };
 }
 
@@ -69,6 +79,7 @@ export async function readDir(dir: string): Promise<Folder | Group> {
         };
     } else {
         return {
+            name: parse(dir).name,
             type: "group",
             path: dir,
             meta: await readMeta(join(dir, meta)),
