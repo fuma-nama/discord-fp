@@ -1,13 +1,19 @@
 {
     "name": "discord-fp",
     "version": "1.0.0",
-    "description": "",
-    "private": true,
+    "description": "A Beautiful Application Command Framework based on Discord.js",
+    "main": "./src/index.ts",
     "scripts": {
         "dev": "ts-node ./test/index.ts"
     },
-    "keywords": [],
+    "keywords": [
+        "discord.js",
+        "slash command",
+        "application command"
+    ],
     "author": "Money SonMooSans",
+    "repository": "github:SonMooSans/discord-fp",
+    "license": "MIT",
     "devDependencies": {
         "@types/hashmap": "^2.3.1",
         "@types/node": "^18.11.18",
@@ -18,5 +24,8 @@
     },
     "dependencies": {
         "hashmap": "^2.4.0"
+    },
+    "peerDependencies": {
+        "discord.js": "14.x"
     }
 }
