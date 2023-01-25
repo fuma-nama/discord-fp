@@ -1,6 +1,10 @@
-# Discord-FP
+<p align="center">
+    <img alt="logo" src="./document/logo.png" width="200" />
+    <h1 align="center">Discord-FP</h1>
+    <p align="center">A Beautiful Application Command Framework based on <b>Discord.js</b></p>
+</p>
 
-A Beautiful Application Command Framework based on **Discord.js**
+## Features
 
 -   **Type-safe**
 -   Light-weight
