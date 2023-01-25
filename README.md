@@ -13,6 +13,9 @@ A Beautiful Application Command Framework based on **Discord.js**
 
 `npm install discord-fp`
 
+> **Note** <br />
+> Example below uses typescript + esModuleInterop enabled, you may convert it into normal common js syntax yourself
+
 ## Slash command in the Best way
 
 Stop writing lots of `interaction.options.get("name")` just for getting the value of an option
