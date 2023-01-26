@@ -5,4 +5,5 @@ export default defineConfig({
     sourcemap: true,
     clean: true,
     minify: true,
+    format: ["esm", "cjs"],
 });
