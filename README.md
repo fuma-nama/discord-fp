@@ -12,13 +12,14 @@
 -   Auto-complete & Middlewares
 -   File-system Based
 -   Beautiful code with Functional Programming
+-   Support both **ESM and CommonJS**
 
 ## Install
 
 `npm install discord-fp`
 
 > **Note** <br />
-> Example below uses typescript + esModuleInterop enabled, you may convert it into normal common js syntax yourself
+> Example below uses commonjs + typescript, you may convert it into normal common js syntax yourself
 
 ## Slash command in the Best way
 
@@ -271,6 +272,36 @@ options.string({
    return `Mr.${v}`;
 }),
 //Transform "Henry" -> "Mr.Henry"
+```
+
+## ESM Usage
+
+ESM has been supported since v0.2.1, notice that we need absolute path for the `dir` property
+
+### Common js
+
+```ts
+import { start } from "discord-fp";
+import { join } from "path";
+
+start(client, {
+    dir: [join(__dirname, "./commands")],
+});
+```
+
+### ESM
+
+```ts
+import { start } from "discord-fp";
+import { join, dirname } from "path";
+import { fileURLToPath } from "url";
+
+start(client, {
+    //loads ./command folder
+    dir: ["commands"].map((v) =>
+        fileURLToPath(join(dirname(import.meta.url), v))
+    ),
+});
 ```
 
 ## Any issues?
