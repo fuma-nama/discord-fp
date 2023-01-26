@@ -7,7 +7,7 @@ import {
     SlashCommandMentionableOption,
     User,
 } from "discord.js";
-import { MakeOption, makeOption } from "../options";
+import { MakeOption, makeOption } from "../option";
 import { BaseOptionConfig, createBuilder } from "./base";
 
 export type ParsedMentionValue =

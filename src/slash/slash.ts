@@ -1,4 +1,5 @@
 import { FileLoader, LoadContext } from "@/core";
+import { SlashCommandKey } from "@/listener/slash";
 import { createSlashBuilder, createBaseBuilder } from "@/utils";
 import {
     ChatInputCommandInteraction,
@@ -32,17 +33,19 @@ export function slash<Options extends SlashOptionsConfig = never>(
     return new SlashCommandFile(config);
 }
 
-function initOptions<B extends SharedSlashCommandOptions>(
-    builder: B,
-    config: SlashCommandConfig<any>
-): B {
+function loadOptions(
+    builder: SharedSlashCommandOptions,
+    config: SlashCommandConfig<any>,
+    context: LoadContext,
+    key: SlashCommandKey
+): void {
     const options = config.options ?? {};
 
     for (const [name, info] of Object.entries<Option<never>>(options)) {
-        builder.options.push(info.build(name));
-    }
+        const build = info.build(name, key, context);
 
-    return builder;
+        builder.options.push(build);
+    }
 }
 
 export class SlashCommandFile extends FileLoader {
@@ -63,6 +66,7 @@ export class SlashCommandFile extends FileLoader {
 
             options[key] = option.parse(v);
         }
+
         this.config.execute({
             event: e,
             options: options,
@@ -71,29 +75,31 @@ export class SlashCommandFile extends FileLoader {
 
     override load({ name }: File, context: LoadContext) {
         const config = this.config;
+        const command = createSlashBuilder(name, config);
+        const key: SlashCommandKey = [command.name, null, null];
 
-        let command = createSlashBuilder(name, config);
-        command = initOptions(command, config);
+        loadOptions(command, config, context, key);
 
-        context.listeners.slash.set([command.name, null, null], this.onEvent);
+        context.listeners.slash.set(key, this.onEvent);
         context.commands.push(command);
     }
 
     loadSubCommand(
         { name }: File,
         context: LoadContext,
-        key: [command: string, group: string | null]
+        parent: [command: string, group: string | null]
     ): SlashCommandSubcommandBuilder {
         const config = this.config;
-
-        let builder = createBaseBuilder(
+        const builder = createBaseBuilder(
             new SlashCommandSubcommandBuilder(),
             name,
             config
         );
-        builder = initOptions(builder, config);
+        const key: SlashCommandKey = [...parent, builder.name];
 
-        context.listeners.slash.set([...key, builder.name], this.onEvent);
+        loadOptions(builder, config, context, key);
+
+        context.listeners.slash.set(key, this.onEvent);
         return builder;
     }
 }

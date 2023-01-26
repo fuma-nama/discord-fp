@@ -9,8 +9,14 @@ export default slash({
         name: options
             .string({
                 description: "Your name",
-                choices: {
-                    hello: { value: "Hello World" },
+                autoComplete(e) {
+                    const items = ["hello", "world"];
+                    const v = e.options.getFocused();
+
+                    const result = items.filter((item) => item.startsWith(v));
+                    e.respond(
+                        result.map((item) => ({ name: item, value: item }))
+                    );
                 },
             })
             .transform((v) => {
@@ -33,7 +39,7 @@ export default slash({
                 required: false,
             })
             .transform((v) => {
-                return v?.username;
+                return v?.username ?? null;
             }),
     },
     execute: async ({ event, options }) => {

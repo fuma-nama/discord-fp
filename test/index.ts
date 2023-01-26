@@ -11,9 +11,6 @@ client.on("ready", () => {
 
     start(client, {
         dir: [join(__dirname, "commands"), join(__dirname, "menu")],
-        register: {
-            enabled: false,
-        },
     });
 });
 

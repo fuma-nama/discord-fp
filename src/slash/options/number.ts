@@ -1,14 +1,17 @@
+import { LoadContext } from "@/core";
+import { SlashCommandKey } from "@/listener/slash";
 import {
     SlashCommandIntegerOption,
     SlashCommandNumberOption,
 } from "discord.js";
-import { makeOption, MakeOption } from "../options";
+import { makeOption, MakeOption } from "../option";
 import {
     BaseOptionConfig,
     ChoicesOptionConfig,
     createBuilder,
     AutoCompleteOptionConfig,
     buildChoices,
+    buildAutoComplete,
 } from "./base";
 
 export type NumberOptionConfig<Required extends boolean> =
@@ -23,12 +26,12 @@ export function number<Required extends boolean = true>(
     config: NumberOptionConfig<Required>
 ): MakeOption<number, Required> {
     return makeOption(config, {
-        build(name) {
-            return createNumberBuilder(
-                new SlashCommandNumberOption(),
+        build(name, command, context) {
+            return createNumberBuilder(new SlashCommandNumberOption(), config, {
                 name,
-                config
-            );
+                command,
+                context,
+            });
         },
         parse(v) {
             return (v?.value as number) ?? null;
@@ -38,8 +41,16 @@ export function number<Required extends boolean = true>(
 
 export function createNumberBuilder<Required extends boolean>(
     base: SlashCommandIntegerOption | SlashCommandNumberOption,
-    name: string,
-    config: NumberOptionConfig<Required>
+    config: NumberOptionConfig<Required>,
+    {
+        name,
+        command,
+        context,
+    }: {
+        name: string;
+        command: SlashCommandKey;
+        context: LoadContext;
+    }
 ) {
     const builder = createBuilder(base, name, config);
     if (config.min != null) builder.setMinValue(config.min);
@@ -47,5 +58,5 @@ export function createNumberBuilder<Required extends boolean>(
 
     return builder
         .addChoices(...buildChoices(config))
-        .setAutocomplete(config.autoComplete != null);
+        .setAutocomplete(buildAutoComplete([command, name], config, context));
 }

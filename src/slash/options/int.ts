@@ -1,5 +1,5 @@
 import { SlashCommandIntegerOption } from "discord.js";
-import { MakeOption, makeOption } from "../options";
+import { MakeOption, makeOption } from "../option";
 import { createNumberBuilder, NumberOptionConfig } from "./number";
 
 export type IntOptionConfig<Required extends boolean> =
@@ -12,11 +12,15 @@ export function int<Required extends boolean = true>(
         parse(v) {
             return (v?.value as number) ?? null;
         },
-        build(name) {
+        build(name, command, context) {
             return createNumberBuilder(
                 new SlashCommandIntegerOption(),
-                name,
-                config
+                config,
+                {
+                    name,
+                    command,
+                    context,
+                }
             );
         },
     });

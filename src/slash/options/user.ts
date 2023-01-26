@@ -1,5 +1,5 @@
 import { APIUser, SlashCommandUserOption, User } from "discord.js";
-import { makeOption, MakeOption } from "../options";
+import { makeOption, MakeOption } from "../option";
 import { BaseOptionConfig, createBuilder } from "./base";
 
 export type UserOptionConfig<Required extends boolean> =
@@ -9,7 +9,7 @@ export function user<Required extends boolean = true>(
     config: UserOptionConfig<Required>
 ): MakeOption<User | APIUser, Required> {
     return makeOption(config, {
-        build(name: string) {
+        build: (name) => {
             return createBuilder(new SlashCommandUserOption(), name, config);
         },
 

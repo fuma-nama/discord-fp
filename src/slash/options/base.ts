@@ -1,6 +1,9 @@
+import { LoadContext } from "@/core";
+import { SlashCommandKey } from "@/listener/slash";
 import {
     APIApplicationCommandOptionChoice,
     ApplicationCommandOptionBase,
+    AutocompleteInteraction,
     LocalizationMap,
 } from "discord.js";
 
@@ -54,5 +57,24 @@ export function buildChoices<V extends string | number>(
 }
 
 export type AutoCompleteOptionConfig = {
-    autoComplete?: () => any;
+    autoComplete?:
+        | ((e: AutocompleteInteraction) => void | Promise<void>)
+        | boolean;
 };
+
+export type AutoCompleteKey = [key: SlashCommandKey, name: string];
+
+export function buildAutoComplete(
+    key: AutoCompleteKey,
+    config: AutoCompleteOptionConfig,
+    context: LoadContext
+): boolean {
+    const autoComplete = config.autoComplete;
+    if (autoComplete == null || autoComplete == false) return false;
+
+    if (typeof autoComplete === "function") {
+        context.listeners.autoComplete.set(key, (e) => autoComplete(e));
+    }
+
+    return true;
+}

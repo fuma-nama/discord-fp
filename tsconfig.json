@@ -9,6 +9,7 @@
         "moduleResolution": "node",
         "target": "ES2022",
         "strictNullChecks": true,
+        "noImplicitThis": true,
         "paths": {
             "discord-fp": ["./src"],
             "@/*": ["./src/*"]

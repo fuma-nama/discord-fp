@@ -1,4 +1,5 @@
 import {
+    AutocompleteInteraction,
     ChatInputCommandInteraction,
     Client,
     MessageContextMenuCommandInteraction,
@@ -8,6 +9,7 @@ import { MessageContextCommandKey, UserContextCommandKey } from "./context";
 import { SlashCommandKey } from "./slash";
 import HashMap from "hashmap";
 import { Middleware } from "@/middleware";
+import { AutoCompleteKey } from "@/slash/options/base";
 
 export class ListenerModule {
     readonly slash = new HashMap<
@@ -21,6 +23,10 @@ export class ListenerModule {
     readonly message = new HashMap<
         MessageContextCommandKey,
         (e: MessageContextMenuCommandInteraction) => void
+    >();
+    readonly autoComplete = new HashMap<
+        AutoCompleteKey,
+        (e: AutocompleteInteraction) => void
     >();
 
     withMiddleware(fn: Middleware | null): {
@@ -49,6 +55,10 @@ export class ListenerModule {
 
                 for (const [key, handler] of child.message.entries()) {
                     self.message.set(key, (e) => fn(e, handler));
+                }
+
+                for (const [key, handler] of child.autoComplete.entries()) {
+                    self.autoComplete.set(key, (e) => fn(e, handler));
                 }
             },
         };
@@ -85,6 +95,21 @@ export class ListenerModule {
             if (e.isUserContextMenuCommand()) {
                 const key: UserContextCommandKey = [e.commandName];
                 const handler = this.user.get(key);
+
+                return handler?.(e);
+            }
+
+            if (e.isAutocomplete()) {
+                const key: AutoCompleteKey = [
+                    [
+                        e.commandName,
+                        e.options.getSubcommandGroup(false),
+                        e.options.getSubcommand(false),
+                    ],
+                    e.options.getFocused(true).name,
+                ];
+
+                const handler = this.autoComplete.get(key);
 
                 return handler?.(e);
             }

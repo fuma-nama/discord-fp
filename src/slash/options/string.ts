@@ -1,11 +1,12 @@
 import { SlashCommandStringOption } from "discord.js";
-import { MakeOption, makeOption } from "../options";
+import { MakeOption, makeOption } from "../option";
 import {
     AutoCompleteOptionConfig,
     BaseOptionConfig,
     ChoicesOptionConfig,
     createBuilder,
     buildChoices,
+    buildAutoComplete,
 } from "./base";
 
 export type StringOptionConfig<Required extends boolean> =
@@ -23,7 +24,7 @@ export function string<Required extends boolean = true>(
         parse(v) {
             return (v?.value as string) ?? null;
         },
-        build(name: string) {
+        build(name, command, context) {
             const builder = createBuilder(
                 new SlashCommandStringOption(),
                 name,
@@ -35,7 +36,9 @@ export function string<Required extends boolean = true>(
 
             return builder
                 .setChoices(...buildChoices(config))
-                .setAutocomplete(config.autoComplete != null);
+                .setAutocomplete(
+                    buildAutoComplete([command, name], config, context)
+                );
         },
     });
 }
