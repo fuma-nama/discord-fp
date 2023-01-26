@@ -1,4 +1,4 @@
-import { group, Middleware } from "discord-fp";
+import { group, Middleware } from "../../../src/index.js";
 
 export default group({
     description: "Test commands",

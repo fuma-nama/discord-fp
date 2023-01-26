@@ -1,6 +1,6 @@
 import { SlashCommandBooleanOption } from "discord.js";
-import { MakeOption, makeOption } from "../option";
-import { BaseOptionConfig, createBuilder } from "./base";
+import { MakeOption, makeOption } from "../option.js";
+import { BaseOptionConfig, createBuilder } from "./base.js";
 
 export type BooleanOptionConfig<Required extends boolean> =
     BaseOptionConfig<Required>;

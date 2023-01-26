@@ -1,8 +1,13 @@
-import { FileExport } from "./../types";
+import { FileExport } from "@/types.js";
 import { lstatSync, readdirSync } from "fs";
 import { join, parse } from "path";
-import { FileLoader, GroupLoader } from "../core";
-import { File, Folder, Group, Meta, MetaExport, Node } from "../types";
+import { FileLoader, GroupLoader } from "../core/index.js";
+import { File, Folder, Group, Meta, MetaExport, Node } from "../types.js";
+import { pathToFileURL } from "url";
+
+async function asyncImport(path: string) {
+    return await import(pathToFileURL(path).href);
+}
 
 /**
  *
@@ -35,7 +40,7 @@ export async function readNode(path: string): Promise<Node> {
 }
 
 export async function readFile(path: string): Promise<File> {
-    const { default: loader } = (await import(path)) as FileExport;
+    const { default: loader } = (await asyncImport(path)) as FileExport;
 
     if (!(loader instanceof FileLoader))
         throw new Error(`Invalid loader ${path}`);
@@ -49,7 +54,9 @@ export async function readFile(path: string): Promise<File> {
 }
 
 export async function readMeta(path: string): Promise<Meta> {
-    const { default: loader, middleware } = (await import(path)) as MetaExport;
+    const { default: loader, middleware } = (await asyncImport(
+        path
+    )) as MetaExport;
 
     if (middleware != null && typeof middleware !== "function")
         throw new Error(`Invalid middleware ${path}`);

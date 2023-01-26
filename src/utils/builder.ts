@@ -1,4 +1,4 @@
-import { ApplicationCommandConfig, DescriptionConfig } from "./../types";
+import { ApplicationCommandConfig, DescriptionConfig } from "@/types.js";
 import {
     ContextMenuCommandBuilder,
     SharedNameAndDescription,

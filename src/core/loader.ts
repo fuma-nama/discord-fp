@@ -1,7 +1,7 @@
-import { ListenerModule } from "@/listener/module";
-import { Group, Node, Folder, File } from "@/types";
+import { ListenerModule } from "@/listener/module.js";
+import { Group, Node, Folder, File } from "@/types.js";
 import { ApplicationCommandDataResolvable, Client } from "discord.js";
-import { readDir } from "../utils";
+import { readDir } from "@/utils/file.js";
 
 export abstract class NodeLoader<T extends Node> {
     /**

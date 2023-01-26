@@ -2,10 +2,18 @@
     "name": "discord-fp",
     "version": "0.2.0",
     "description": "A Beautiful Application Command Framework based on Discord.js",
-    "main": "dist/index.js",
-    "types": "dist/index.d.ts",
+    "type": "module",
+    "main": "dist/index.cjs",
+    "module": "./dist/index.js",
+    "types": "./dist/index.d.ts",
+    "exports": {
+        ".": {
+            "require": "./dist/index.cjs",
+            "import": "./dist/index.js",
+            "types": "./dist/index.d.ts"
+        }
+    },
     "scripts": {
-        "dev": "ts-node ./test/index.ts",
         "build": "tsup --dts",
         "test": "echo \"No test specified\""
     },
@@ -25,7 +33,6 @@
         "@types/node": "^18.11.18",
         "discord.js": "^14.7.1",
         "dotenv": "^16.0.3",
-        "tsconfig-paths": "^4.1.2",
         "tsup": "^6.5.0",
         "typescript": "^4.9.4"
     },

@@ -1,6 +1,6 @@
 import { SlashCommandIntegerOption } from "discord.js";
-import { MakeOption, makeOption } from "../option";
-import { createNumberBuilder, NumberOptionConfig } from "./number";
+import { MakeOption, makeOption } from "../option.js";
+import { createNumberBuilder, NumberOptionConfig } from "./number.js";
 
 export type IntOptionConfig<Required extends boolean> =
     NumberOptionConfig<Required>;

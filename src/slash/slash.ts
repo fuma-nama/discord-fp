@@ -1,13 +1,13 @@
-import { FileLoader, LoadContext } from "@/core";
-import { SlashCommandKey } from "@/listener/slash";
-import { createSlashBuilder, createBaseBuilder } from "@/utils";
+import { FileLoader, LoadContext } from "@/core/loader.js";
+import { SlashCommandKey } from "@/listener/slash.js";
+import { createSlashBuilder, createBaseBuilder } from "@/utils/builder.js";
 import {
     ChatInputCommandInteraction,
     SharedSlashCommandOptions,
     SlashCommandSubcommandBuilder,
 } from "discord.js";
-import { ApplicationCommandConfig, DescriptionConfig, File } from "../types";
-import type { InferOptionType, Option } from "./option";
+import { ApplicationCommandConfig, DescriptionConfig, File } from "../types.js";
+import type { InferOptionType, Option } from "./option.js";
 
 type SlashOptionsConfig = { [key: string]: Option<any> };
 

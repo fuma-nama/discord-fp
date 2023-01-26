@@ -1,4 +1,4 @@
-import { message } from "discord-fp";
+import { message } from "../../src/index.js";
 
 export default message({
     async execute(e) {

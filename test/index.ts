@@ -1,5 +1,5 @@
 import { Client, GatewayIntentBits } from "discord.js";
-import { start } from "discord-fp";
+import { start } from "../src/index.js";
 import { join } from "path";
 import * as dotenv from "dotenv";
 dotenv.config();
@@ -14,4 +14,4 @@ client.on("ready", () => {
     });
 });
 
-client.login(process.env["TOKEN"] as string);
+client.login(process.env["TOKEN"]);

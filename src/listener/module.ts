@@ -5,11 +5,11 @@ import {
     MessageContextMenuCommandInteraction,
     UserContextMenuCommandInteraction,
 } from "discord.js";
-import { MessageContextCommandKey, UserContextCommandKey } from "./context";
-import { SlashCommandKey } from "./slash";
+import { MessageContextCommandKey, UserContextCommandKey } from "./context.js";
+import { SlashCommandKey } from "./slash.js";
 import HashMap from "hashmap";
-import { Middleware } from "@/middleware";
-import { AutoCompleteKey } from "@/slash/options/base";
+import { Middleware } from "@/middleware/index.js";
+import { AutoCompleteKey } from "@/slash/options/base.js";
 
 export class ListenerModule {
     readonly slash = new HashMap<

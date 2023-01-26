@@ -1,6 +1,6 @@
 import { APIRole, Role, SlashCommandRoleOption } from "discord.js";
-import { makeOption, MakeOption } from "../option";
-import { BaseOptionConfig, createBuilder } from "./base";
+import { makeOption, MakeOption } from "../option.js";
+import { BaseOptionConfig, createBuilder } from "./base.js";
 
 export type RoleOptionConfig<Required extends boolean> =
     BaseOptionConfig<Required>;

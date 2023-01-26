@@ -1,5 +1,5 @@
 import { SlashCommandStringOption } from "discord.js";
-import { MakeOption, makeOption } from "../option";
+import { MakeOption, makeOption } from "../option.js";
 import {
     AutoCompleteOptionConfig,
     BaseOptionConfig,
@@ -7,7 +7,7 @@ import {
     createBuilder,
     buildChoices,
     buildAutoComplete,
-} from "./base";
+} from "./base.js";
 
 export type StringOptionConfig<Required extends boolean> =
     BaseOptionConfig<Required> &

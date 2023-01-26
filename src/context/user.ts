@@ -1,9 +1,9 @@
-import { ContextCommandConfig, ContextCommandFile } from "./context";
+import { ContextCommandConfig, ContextCommandFile } from "./context.js";
 import {
     ApplicationCommandType,
     UserContextMenuCommandInteraction,
 } from "discord.js";
-import { LoadContext } from "@/core";
+import { LoadContext } from "@/core/loader.js";
 
 export type UserCommandConfig =
     ContextCommandConfig<UserContextMenuCommandInteraction>;

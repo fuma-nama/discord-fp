@@ -1,6 +1,6 @@
 import { Interaction, LocalizationMap } from "discord.js";
-import { FileLoader, GroupLoader } from "./core";
-import { Middleware } from "./middleware";
+import { FileLoader, GroupLoader } from "./core/loader.js";
+import { Middleware } from "./middleware/index.js";
 
 export type FileExport = {
     default?: FileLoader;

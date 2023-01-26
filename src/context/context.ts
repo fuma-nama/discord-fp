@@ -2,9 +2,9 @@ import {
     ContextMenuCommandInteraction,
     ContextMenuCommandType,
 } from "discord.js";
-import { FileLoader, LoadContext } from "../core";
-import { ApplicationCommandConfig, File, Node } from "../types";
-import { createContextBuilder } from "../utils";
+import { FileLoader, LoadContext } from "../core/loader.js";
+import { ApplicationCommandConfig, File, Node } from "../types.js";
+import { createContextBuilder } from "../utils/builder.js";
 
 export type ContextCommandConfig<E extends ContextMenuCommandInteraction> =
     ApplicationCommandConfig & {

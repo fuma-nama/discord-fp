@@ -1,9 +1,9 @@
-import { LoadContext } from "@/core";
+import { LoadContext } from "@/core/index.js";
 import {
     ApplicationCommandType,
     MessageContextMenuCommandInteraction,
 } from "discord.js";
-import { ContextCommandConfig, ContextCommandFile } from "./context";
+import { ContextCommandConfig, ContextCommandFile } from "./context.js";
 
 export type MessageCommandConfig =
     ContextCommandConfig<MessageContextMenuCommandInteraction>;

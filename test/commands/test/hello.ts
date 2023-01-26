@@ -1,4 +1,4 @@
-import { options, slash } from "discord-fp";
+import { options, slash } from "../../../src/index.js";
 
 /**
  * Typesafe discord.js command framework

@@ -1,10 +1,10 @@
-import { LoadContext } from "@/core";
-import { SlashCommandKey } from "@/listener/slash";
+import { LoadContext } from "@/core/loader.js";
+import { SlashCommandKey } from "@/listener/slash.js";
 import {
     SlashCommandIntegerOption,
     SlashCommandNumberOption,
 } from "discord.js";
-import { makeOption, MakeOption } from "../option";
+import { makeOption, MakeOption } from "../option.js";
 import {
     BaseOptionConfig,
     ChoicesOptionConfig,
@@ -12,7 +12,7 @@ import {
     AutoCompleteOptionConfig,
     buildChoices,
     buildAutoComplete,
-} from "./base";
+} from "./base.js";
 
 export type NumberOptionConfig<Required extends boolean> =
     BaseOptionConfig<Required> &

@@ -1,21 +1,14 @@
 {
     "compilerOptions": {
         "outDir": "dist",
-        "declaration": true,
         "esModuleInterop": true,
-        "allowSyntheticDefaultImports": true,
-        "lib": ["ES2022"],
-        "module": "CommonJS",
-        "moduleResolution": "node",
+        "module": "es2020",
+        "moduleResolution": "nodenext",
         "target": "ES2022",
         "strictNullChecks": true,
         "noImplicitThis": true,
         "paths": {
-            "discord-fp": ["./src"],
             "@/*": ["./src/*"]
         }
-    },
-    "ts-node": {
-        "require": ["tsconfig-paths/register"]
     }
 }

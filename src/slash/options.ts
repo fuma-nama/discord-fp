@@ -1,4 +1,4 @@
-import { makeOption } from "./option";
+import { makeOption } from "./option.js";
 import {
     string,
     role,
@@ -9,7 +9,7 @@ import {
     attachment,
     channel,
     user,
-} from "./options/index";
+} from "./options/index.js";
 
 export const options = {
     custom: makeOption,

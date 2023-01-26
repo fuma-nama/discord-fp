@@ -1,11 +1,10 @@
-import { LoadContext } from "@/core";
-import { SlashCommandKey } from "@/listener/slash";
+import { LoadContext } from "@/core/loader.js";
+import { SlashCommandKey } from "@/listener/slash.js";
 import {
     ApplicationCommandOptionBase,
-    AutocompleteInteraction,
     CommandInteractionOption,
 } from "discord.js";
-import { BaseOptionConfig } from "./options/base";
+import { BaseOptionConfig } from "./options/base.js";
 
 export type InferOptionType<T> = T extends Option<infer P> ? P : never;
 

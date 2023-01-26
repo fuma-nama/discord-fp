@@ -1,6 +1,6 @@
-import { ListenerModule } from "@/listener/module";
+import { ListenerModule } from "@/listener/module.js";
 import { Client } from "discord.js";
-import { LoadContext, loadDir } from "./loader";
+import { LoadContext, loadDir } from "./loader.js";
 
 export type Config = {
     /**

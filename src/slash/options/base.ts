@@ -1,5 +1,5 @@
-import { LoadContext } from "@/core";
-import { SlashCommandKey } from "@/listener/slash";
+import { LoadContext } from "@/core/loader.js";
+import { SlashCommandKey } from "@/listener/slash.js";
 import {
     APIApplicationCommandOptionChoice,
     ApplicationCommandOptionBase,

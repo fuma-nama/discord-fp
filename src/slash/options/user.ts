@@ -1,6 +1,6 @@
 import { APIUser, SlashCommandUserOption, User } from "discord.js";
-import { makeOption, MakeOption } from "../option";
-import { BaseOptionConfig, createBuilder } from "./base";
+import { makeOption, MakeOption } from "../option.js";
+import { BaseOptionConfig, createBuilder } from "./base.js";
 
 export type UserOptionConfig<Required extends boolean> =
     BaseOptionConfig<Required>;

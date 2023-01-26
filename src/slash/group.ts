@@ -3,12 +3,12 @@ import {
     DescriptionConfig,
     Group,
     Node,
-} from "@/types";
+} from "@/types.js";
 import { SlashCommandSubcommandGroupBuilder } from "discord.js";
-import { debugNode } from "@/utils/log";
-import { GroupLoader, LoadContext } from "@/core";
-import { createSlashBuilder, createBaseBuilder } from "@/utils";
-import { SlashCommandFile } from "./slash";
+import { debugNode } from "@/utils/log.js";
+import { GroupLoader, LoadContext } from "@/core/loader.js";
+import { createSlashBuilder, createBaseBuilder } from "@/utils/builder.js";
+import { SlashCommandFile } from "./slash.js";
 
 export type SlashGroupConfig = ApplicationCommandConfig & DescriptionConfig;
 
