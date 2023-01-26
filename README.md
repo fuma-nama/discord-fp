@@ -9,7 +9,7 @@
 -   **Type-safe**
 -   Light-weight
 -   High performance
--   Middlewares
+-   Auto-complete & Middlewares
 -   File-system Based
 -   Beautiful code with Functional Programming
 
@@ -32,13 +32,9 @@ import { options, slash } from "discord-fp";
 export default slash({
     description: "Say Hello to you",
     options: {
-        name: options
-            .string({
-                description: "Your name",
-            })
-            .transform((v) => {
-                return `Mr.${v}`;
-            }),
+        name: options.string({
+            description: "Your name",
+        }),
     },
     execute: async ({ event, options }) => {
         await event.reply(`Hello, ${options.name}`);
@@ -231,6 +227,50 @@ export default group({
 export middleware: Middleware = (e, handler) => {
     return handler(e)
 }
+```
+
+## Command Options
+
+We provides type-safe options out-of-the-box
+
+```ts
+import { options } from "discord-fp";
+
+options.string({
+    description: "Your name",
+    required: false,
+});
+```
+
+### Auto-complete
+
+Enable auto-complete _easily_
+
+```ts
+options.string({
+    description: "Your name",
+    required: false,
+    autoComplete(e) {
+        const items = ["hello", "world"];
+        const v = e.options.getFocused();
+
+        e.respond(result);
+    },
+});
+```
+
+### Transform
+
+Make your code even better with `transform`
+
+```ts
+options.string({
+    description: "Your name",
+    require: true,
+}).transform((v) => {
+   return `Mr.${v}`;
+}),
+//Transform "Henry" -> "Mr.Henry"
 ```
 
 ## Any issues?
