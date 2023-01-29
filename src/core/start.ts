@@ -19,7 +19,10 @@ export type Config = {
 
 const ready = "Ready";
 
-export async function start(client: Client, config: Config) {
+export async function start(
+    client: Client,
+    config: Config
+): Promise<LoadContext> {
     const context: LoadContext = {
         client,
         commands: [],
@@ -39,6 +42,7 @@ export async function start(client: Client, config: Config) {
     context.listeners.load(client);
 
     console.timeEnd(ready);
+    return context;
 }
 
 async function registerCommands(config: Config, context: LoadContext) {

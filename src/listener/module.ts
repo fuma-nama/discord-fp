@@ -2,6 +2,7 @@ import {
     AutocompleteInteraction,
     ChatInputCommandInteraction,
     Client,
+    Interaction,
     MessageContextMenuCommandInteraction,
     UserContextMenuCommandInteraction,
 } from "discord.js";
@@ -64,55 +65,63 @@ export class ListenerModule {
         };
     }
 
-    load(client: Client) {
-        client.on("interactionCreate", (e) => {
-            if (e.isChatInputCommand()) {
-                const key: SlashCommandKey = [
+    handle(e: Interaction) {
+        if (e.isChatInputCommand()) {
+            const key: SlashCommandKey = [
+                e.commandName,
+                e.options.getSubcommandGroup(false),
+                e.options.getSubcommand(false),
+            ];
+
+            const handler = this.slash.get(key);
+
+            if (handler == null) {
+                console.warn("Unhandled slash command", key, this.slash.keys());
+            }
+            return handler?.(e);
+        }
+
+        if (e.isMessageContextMenuCommand()) {
+            const key: MessageContextCommandKey = [e.commandName];
+            const handler = this.message.get(key);
+
+            return handler?.(e);
+        }
+
+        if (e.isUserContextMenuCommand()) {
+            const key: UserContextCommandKey = [e.commandName];
+            const handler = this.user.get(key);
+
+            return handler?.(e);
+        }
+
+        if (e.isAutocomplete()) {
+            const key: AutoCompleteKey = [
+                [
                     e.commandName,
                     e.options.getSubcommandGroup(false),
                     e.options.getSubcommand(false),
-                ];
+                ],
+                e.options.getFocused(true).name,
+            ];
 
-                const handler = this.slash.get(key);
+            const handler = this.autoComplete.get(key);
 
-                if (handler == null) {
-                    console.warn(
-                        "Unhandled slash command",
-                        key,
-                        this.slash.keys()
-                    );
-                }
-                return handler?.(e);
-            }
+            return handler?.(e);
+        }
+    }
 
-            if (e.isMessageContextMenuCommand()) {
-                const key: MessageContextCommandKey = [e.commandName];
-                const handler = this.message.get(key);
+    /**
+     * Add listener
+     */
+    load(client: Client) {
+        client.on("interactionCreate", this.handle);
+    }
 
-                return handler?.(e);
-            }
-
-            if (e.isUserContextMenuCommand()) {
-                const key: UserContextCommandKey = [e.commandName];
-                const handler = this.user.get(key);
-
-                return handler?.(e);
-            }
-
-            if (e.isAutocomplete()) {
-                const key: AutoCompleteKey = [
-                    [
-                        e.commandName,
-                        e.options.getSubcommandGroup(false),
-                        e.options.getSubcommand(false),
-                    ],
-                    e.options.getFocused(true).name,
-                ];
-
-                const handler = this.autoComplete.get(key);
-
-                return handler?.(e);
-            }
-        });
+    /**
+     * Remove listener
+     */
+    unload(client: Client) {
+        client.removeListener("interactionCreate", this.handle);
     }
 }
