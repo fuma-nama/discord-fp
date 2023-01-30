@@ -8,11 +8,13 @@ import { registerCommands, RegisterConfig } from "./register.js";
 
 type Config = {
     /**
-     * where to load commands
+     * Where to load commands (path or node, relative path is allowed)
      */
-    dir: string | string[];
+    load: (Node | string)[];
     register?: RegisterConfig;
 };
+
+const ready = "Ready";
 
 /**
  * Start and register commands
@@ -21,58 +23,33 @@ export async function start(
     client: Client,
     config: Config
 ): Promise<LoadContext> {
+    console.time(ready);
     const context: LoadContext = {
         client,
         commands: [],
         listeners: new ListenerModule(),
     };
-    const nodes: Node[] = [];
-    const scan = Array.isArray(config.dir) ? config.dir : [config.dir];
 
-    console.log("Scanning files...");
-    for (const dir of scan) {
-        nodes.push(await readNode(resolve(dir)));
-    }
-
-    return await startBase({
-        register: config.register,
-        context,
-        nodes,
-    });
-}
-
-type BaseConfig = {
-    /**
-     * Nodes to load
-     */
-    nodes: Node[];
-
-    register?: RegisterConfig;
-    context: LoadContext;
-};
-
-/**
- * Start and register commands
- */
-export async function startBase({
-    register: config,
-    nodes,
-    context,
-}: BaseConfig) {
-    const ready = "Ready";
-
-    console.time(ready);
     console.log("Loading commands...");
-    for (const node of nodes) {
-        await loadNode(node, context);
+    for (const target of config.load) {
+        await load(target, context);
     }
 
-    await registerCommands(config, context);
+    await registerCommands(config.register, context);
 
     console.log("Loading event listeners...");
     context.listeners.load(context.client);
 
     console.timeEnd(ready);
-
     return context;
+}
+
+async function load(target: string | Node, context: LoadContext) {
+    if (typeof target === "string") {
+        const node = await readNode(resolve(target));
+
+        await loadNode(node, context);
+    } else {
+        await loadNode(target, context);
+    }
 }
