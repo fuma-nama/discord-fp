@@ -100,7 +100,7 @@ import type { Middleware } from "discord-fp";
 
 export middleware: Middleware = (e, handler) => {
     if (something) {
-        handler(e)
+        return handler(e)
     } else {
         //...
     }
@@ -148,14 +148,15 @@ import { join } from "path";
 client.on("ready", () => {
     start(client, {
         //where to load commands
-        dir: join(__dirname, "commands"),
+        load: ["./commands"],
     });
 });
 ```
 
 ### Create Slash command
 
-Create a file inside the folder
+Create a file inside the folder <br />
+Since it's file-system based, command name is same as its file name
 
 > commands/hello.ts
 
@@ -276,16 +277,18 @@ options.string({
 
 ## ESM Usage
 
-ESM has been supported since v0.2.1, notice that we need absolute path for the `dir` property
+ESM has been supported since v0.2.1
+
+> **Note** <br />
+> If you have any problems with relative path, you may pass an absolute path instead
 
 ### Common js
 
 ```ts
-import { start } from "discord-fp";
-import { join } from "path";
+const { start } = require("discord-fp");
 
 start(client, {
-    dir: [join(__dirname, "./commands")],
+    load: ["./commands"],
 });
 ```
 
@@ -293,14 +296,9 @@ start(client, {
 
 ```ts
 import { start } from "discord-fp";
-import { join, dirname } from "path";
-import { fileURLToPath } from "url";
 
 start(client, {
-    //loads ./command folder
-    dir: ["commands"].map((v) =>
-        fileURLToPath(join(dirname(import.meta.url), v))
-    ),
+    load: ["./commands"],
 });
 ```
 
