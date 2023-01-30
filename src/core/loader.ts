@@ -1,7 +1,6 @@
 import { ListenerModule } from "@/listener/module.js";
-import { Group, Node, Folder, File } from "@/types.js";
+import { Group, Node, File } from "@/types.js";
 import { ApplicationCommandDataResolvable, Client } from "discord.js";
-import { readDir } from "@/utils/file.js";
 
 export abstract class NodeLoader<T extends Node> {
     /**
@@ -15,6 +14,9 @@ export abstract class FileLoader extends NodeLoader<File> {}
 
 export abstract class GroupLoader extends NodeLoader<Group> {}
 
+/**
+ * Used for loading commands
+ */
 export type LoadContext = {
     client: Client;
     commands: ApplicationCommandDataResolvable[];

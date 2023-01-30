@@ -2,6 +2,7 @@ import { readNode } from "@/index.js";
 import { ListenerModule } from "@/listener/module.js";
 import { Node } from "@/types.js";
 import { Client } from "discord.js";
+import { resolve } from "path";
 import { LoadContext, loadNode } from "./loader.js";
 import { registerCommands, RegisterConfig } from "./register.js";
 
@@ -30,7 +31,7 @@ export async function start(
 
     console.log("Scanning files...");
     for (const dir of scan) {
-        nodes.push(await readNode(dir));
+        nodes.push(await readNode(resolve(dir)));
     }
 
     return await startBase({
@@ -60,7 +61,7 @@ export async function startBase({
 }: BaseConfig) {
     const ready = "Ready";
 
-    console.timeLog(ready);
+    console.time(ready);
     console.log("Loading commands...");
     for (const node of nodes) {
         await loadNode(node, context);
