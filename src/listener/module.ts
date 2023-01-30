@@ -13,59 +13,53 @@ import { Middleware } from "@/middleware/index.js";
 import { AutoCompleteKey } from "@/slash/options/base.js";
 
 export class ListenerModule {
-    readonly slash = new HashMap<
+    private middleware?: Middleware;
+
+    readonly slash = new ListenerMap<
         SlashCommandKey,
-        (e: ChatInputCommandInteraction) => void
-    >();
-    readonly user = new HashMap<
+        ChatInputCommandInteraction
+    >(this);
+    readonly user = new ListenerMap<
         UserContextCommandKey,
-        (e: UserContextMenuCommandInteraction) => void
-    >();
-    readonly message = new HashMap<
+        UserContextMenuCommandInteraction
+    >(this);
+    readonly message = new ListenerMap<
         MessageContextCommandKey,
-        (e: MessageContextMenuCommandInteraction) => void
-    >();
-    readonly autoComplete = new HashMap<
+        MessageContextMenuCommandInteraction
+    >(this);
+    readonly autoComplete = new ListenerMap<
         AutoCompleteKey,
-        (e: AutocompleteInteraction) => void
-    >();
+        AutocompleteInteraction
+    >(this);
 
-    withMiddleware(fn: Middleware | null): {
-        child: ListenerModule;
-        resolve: () => void;
-    } {
-        if (fn == null) {
-            return {
-                child: this,
-                resolve: () => {},
-            };
-        }
+    /**
+     * Inject middleware into event listener
+     */
+    mapEventListener<E extends Interaction>(
+        inner: (e: E) => void
+    ): (e: E) => void {
+        const middleware = this.middleware;
 
-        const child = new ListenerModule();
-        const self = this;
-        return {
-            child,
-            resolve() {
-                for (const [key, handler] of child.slash.entries()) {
-                    self.slash.set(key, (e) => fn(e, handler));
-                }
-
-                for (const [key, handler] of child.user.entries()) {
-                    self.user.set(key, (e) => fn(e, handler));
-                }
-
-                for (const [key, handler] of child.message.entries()) {
-                    self.message.set(key, (e) => fn(e, handler));
-                }
-
-                for (const [key, handler] of child.autoComplete.entries()) {
-                    self.autoComplete.set(key, (e) => fn(e, handler));
-                }
-            },
-        };
+        return middleware == null ? inner : (e) => middleware(e, inner);
     }
 
-    handle(e: Interaction) {
+    /**
+     * Add middleware
+     * @returns Function to remove middleware
+     */
+    withMiddleware(fn: Middleware): () => void {
+        const prev = this.middleware;
+
+        this.middleware = (e, handler) =>
+            fn(e, prev != null ? (event) => prev(event, handler) : handler);
+
+        return () => (this.middleware = prev);
+    }
+
+    /**
+     * Handle interaction event
+     */
+    readonly handle = (e: Interaction) => {
         if (e.isChatInputCommand()) {
             const key: SlashCommandKey = [
                 e.commandName,
@@ -75,9 +69,6 @@ export class ListenerModule {
 
             const handler = this.slash.get(key);
 
-            if (handler == null) {
-                console.warn("Unhandled slash command", key, this.slash.keys());
-            }
             return handler?.(e);
         }
 
@@ -109,7 +100,7 @@ export class ListenerModule {
 
             return handler?.(e);
         }
-    }
+    };
 
     /**
      * Add listener
@@ -123,5 +114,22 @@ export class ListenerModule {
      */
     unload(client: Client) {
         client.removeListener("interactionCreate", this.handle);
+    }
+}
+
+export class ListenerMap<K, E extends Interaction> {
+    private inner = new HashMap<K, (e: E) => void>();
+    readonly parent: ListenerModule;
+
+    get(key: K) {
+        return this.inner.get(key);
+    }
+
+    set(key: K, value: (e: E) => void) {
+        this.inner.set(key, this.parent.mapEventListener(value));
+    }
+
+    constructor(parent: ListenerModule) {
+        this.parent = parent;
     }
 }

@@ -37,22 +37,24 @@ export async function loadNode(node: Node, context: LoadContext) {
             break;
         }
         case "group": {
-            const { child: listeners, resolve } =
-                context.listeners.withMiddleware(node.meta.middleware ?? null);
+            let removeMiddleware: (() => void) | null = null;
+
+            if (node.meta.middleware != null) {
+                removeMiddleware = context.listeners.withMiddleware(
+                    node.meta.middleware
+                );
+            }
 
             if (node.meta.loader != null) {
-                await node.meta.loader.load(node, { ...context, listeners });
-                resolve();
-
-                break;
+                await node.meta.loader.load(node, context);
+            } else {
+                for (const child of node.nodes) {
+                    await loadNode(child, context);
+                }
             }
 
-            for (const child of node.nodes) {
-                await loadNode(child, { ...context, listeners });
-                resolve();
-
-                break;
-            }
+            removeMiddleware?.();
+            break;
         }
     }
 
