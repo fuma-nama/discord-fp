@@ -11,7 +11,13 @@ type Config = {
      * Where to load commands (path or node, relative path is allowed)
      */
     load: (Node | string)[];
+
     register?: RegisterConfig;
+
+    /**
+     * override default load context
+     */
+    defaultContext?: LoadContext;
 };
 
 const ready = "Ready";
@@ -24,7 +30,7 @@ export async function start(
     config: Config
 ): Promise<LoadContext> {
     console.time(ready);
-    const context: LoadContext = {
+    const context: LoadContext = config.defaultContext ?? {
         client,
         commands: [],
         listeners: new ListenerModule(),
