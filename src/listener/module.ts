@@ -50,8 +50,10 @@ export class ListenerModule {
     withMiddleware(fn: Middleware): () => void {
         const prev = this.middleware;
 
-        this.middleware = (e, handler) =>
-            fn(e, prev != null ? (event) => prev(event, handler) : handler);
+        this.middleware =
+            prev != null
+                ? (e, handler) => prev(e, (event) => fn(event, handler))
+                : fn;
 
         return () => (this.middleware = prev);
     }
