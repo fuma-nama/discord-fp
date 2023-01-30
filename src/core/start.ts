@@ -1,24 +1,21 @@
+import { readNode } from "@/index.js";
 import { ListenerModule } from "@/listener/module.js";
+import { Node } from "@/types.js";
 import { Client } from "discord.js";
-import { LoadContext, loadDir } from "./loader.js";
+import { LoadContext, loadNode } from "./loader.js";
+import { registerCommands, RegisterConfig } from "./register.js";
 
-export type Config = {
+type Config = {
     /**
      * where to load commands
      */
     dir: string | string[];
-    register?: {
-        /**
-         * if disabled, Skip registering commands
-         *
-         * default: true
-         */
-        enabled?: boolean;
-    };
+    register?: RegisterConfig;
 };
 
-const ready = "Ready";
-
+/**
+ * Start and register commands
+ */
 export async function start(
     client: Client,
     config: Config
@@ -28,37 +25,53 @@ export async function start(
         commands: [],
         listeners: new ListenerModule(),
     };
-    console.time(ready);
+    const nodes: Node[] = [];
+    const scan = Array.isArray(config.dir) ? config.dir : [config.dir];
 
+    console.log("Scanning files...");
+    for (const dir of scan) {
+        nodes.push(await readNode(dir));
+    }
+
+    return await startBase({
+        register: config.register,
+        context,
+        nodes,
+    });
+}
+
+type BaseConfig = {
+    /**
+     * Nodes to load
+     */
+    nodes: Node[];
+
+    register?: RegisterConfig;
+    context: LoadContext;
+};
+
+/**
+ * Start and register commands
+ */
+export async function startBase({
+    register: config,
+    nodes,
+    context,
+}: BaseConfig) {
+    const ready = "Ready";
+
+    console.timeLog(ready);
     console.log("Loading commands...");
-    const load = Array.isArray(config.dir) ? config.dir : [config.dir];
-    for (const dir of load) {
-        await loadDir(dir, context);
+    for (const node of nodes) {
+        await loadNode(node, context);
     }
 
     await registerCommands(config, context);
 
     console.log("Loading event listeners...");
-    context.listeners.load(client);
+    context.listeners.load(context.client);
 
     console.timeEnd(ready);
+
     return context;
-}
-
-async function registerCommands(config: Config, context: LoadContext) {
-    const register = {
-        enabled: config.register?.enabled ?? true,
-    };
-
-    if (register.enabled === true) {
-        const application = context.client.application;
-        console.log("Registering commands...");
-
-        if (application == null)
-            throw new Error("Client is not ready to register commands");
-
-        await application.commands.set(context.commands);
-    } else {
-        console.log("Commands registration skipped");
-    }
 }

@@ -56,13 +56,3 @@ export async function loadNode(node: Node, context: LoadContext) {
 
     console.log(`${node.path} had loaded Successfully`);
 }
-
-export async function loadDir(
-    dir: string,
-    context: LoadContext
-): Promise<Folder | Group | undefined> {
-    const node = await readDir(dir);
-    await loadNode(node, context);
-
-    return node;
-}
