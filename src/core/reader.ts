@@ -1,7 +1,7 @@
 import { FileExport } from "@/types.js";
 import { lstatSync, readdirSync } from "fs";
 import { join, parse } from "path";
-import { FileLoader, GroupLoader } from "../core/index.js";
+import { FileLoader, GroupLoader } from "./index.js";
 import { File, Folder, Group, Meta, MetaExport, Node } from "../types.js";
 import { pathToFileURL } from "url";
 
@@ -10,8 +10,6 @@ async function asyncImport(path: string) {
 }
 
 /**
- *
- * @param dir The path of dir
  * @param files files to search
  */
 export function findMetaFile(
