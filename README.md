@@ -139,7 +139,7 @@ Take a look at `options`:
 
 ## Getting Started
 
-Try our [template](https://github.com/SonMooSans/discord-bot-starter) where everything is ready for production 
+Try our [template](https://github.com/SonMooSans/discord-bot-starter) which includes everything you need 
 
 Start Discord-FP after the bot is ready
 
