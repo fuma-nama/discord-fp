@@ -2,13 +2,6 @@ import { ListenerModule } from "@/listener/module.js";
 import { Group, Node, File } from "@/types.js";
 import { ApplicationCommandDataResolvable, Client } from "discord.js";
 
-// export abstract class NodeLoader<T extends Node> {
-//     /**
-//      * @param self The node of current file
-//      * @param context
-//      */
-//     abstract load(self: T, context: LoadContext): void | Promise<void>;
-// }
 export interface NodeLoader<T extends Node> {
     /**
      * @param self The node of current file
