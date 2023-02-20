@@ -2,17 +2,24 @@ import { ListenerModule } from "@/listener/module.js";
 import { Group, Node, File } from "@/types.js";
 import { ApplicationCommandDataResolvable, Client } from "discord.js";
 
-export abstract class NodeLoader<T extends Node> {
+// export abstract class NodeLoader<T extends Node> {
+//     /**
+//      * @param self The node of current file
+//      * @param context
+//      */
+//     abstract load(self: T, context: LoadContext): void | Promise<void>;
+// }
+export interface NodeLoader<T extends Node> {
     /**
      * @param self The node of current file
      * @param context
      */
-    abstract load(self: T, context: LoadContext): void | Promise<void>;
+    load(self: T, context: LoadContext): void | Promise<void>;
 }
 
-export abstract class FileLoader extends NodeLoader<File> {}
+export interface FileLoader extends NodeLoader<File> {}
 
-export abstract class GroupLoader extends NodeLoader<Group> {}
+export interface GroupLoader extends NodeLoader<Group> {}
 
 /**
  * Used for loading commands

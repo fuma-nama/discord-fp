@@ -13,17 +13,16 @@ export type ContextCommandConfig<E extends ContextMenuCommandInteraction> =
 
 export abstract class ContextCommandFile<
     E extends ContextMenuCommandInteraction
-> extends FileLoader {
+> implements FileLoader {
     readonly config: ContextCommandConfig<E>;
     readonly type: ContextMenuCommandType;
 
     constructor(config: ContextCommandConfig<E>, type: ContextMenuCommandType) {
-        super();
         this.config = config;
         this.type = type;
     }
 
-    override load({ name }: File, context: LoadContext): void | Promise<void> {
+    load({ name }: File, context: LoadContext): void | Promise<void> {
         const config = this.config;
         const builder = createContextBuilder(name, config).setType(this.type);
 
