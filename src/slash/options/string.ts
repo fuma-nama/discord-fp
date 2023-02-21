@@ -1,5 +1,5 @@
 import { SlashCommandStringOption } from "discord.js";
-import { MakeOption, makeOption } from "../option.js";
+import { MakeOption, makeOption } from "./base.js";
 import {
     AutoCompleteOptionConfig,
     BaseOptionConfig,

@@ -1,10 +1,10 @@
 import { LoadContext } from "@/core/loader.js";
-import { SlashCommandKey } from "@/listener/slash.js";
+import { SlashCommandKey } from "@/listener/keys.js";
 import {
     SlashCommandIntegerOption,
     SlashCommandNumberOption,
 } from "discord.js";
-import { makeOption, MakeOption } from "../option.js";
+import { makeOption, MakeOption } from "./base.js";
 import {
     BaseOptionConfig,
     ChoicesOptionConfig,

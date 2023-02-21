@@ -4,7 +4,7 @@ import {
     GuildBasedChannel,
     SlashCommandChannelOption,
 } from "discord.js";
-import { makeOption, MakeOption } from "../option.js";
+import { makeOption, MakeOption } from "./base.js";
 import { BaseOptionConfig, createBuilder } from "./base.js";
 
 export type ChannelOptionConfig<Required extends boolean> =

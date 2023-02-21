@@ -1,4 +1,4 @@
-import { makeOption } from "./option.js";
+import { makeOption } from "./options/base.js";
 import {
     string,
     role,
