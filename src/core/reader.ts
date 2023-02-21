@@ -52,7 +52,6 @@ export async function readFile(path: string): Promise<File> {
 export async function readMeta(path: string): Promise<Meta> {
     const { default: loader } = (await asyncImport(path)) as MetaExport;
 
-    console.log(loader);
     if (loader != null && loader.type !== "group")
         throw new Error(`Invalid loader ${path}`);
 
