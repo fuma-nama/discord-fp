@@ -81,8 +81,8 @@ Not just slash commands, you are able to create context menu commands with **few
 import { message } from "discord-fp";
 
 export default message({
-    async execute(e) {
-        await e.reply("I don't wanna delete message!");
+    async execute({ event }) {
+        await event.reply("I don't wanna delete message!");
     },
 });
 ```
