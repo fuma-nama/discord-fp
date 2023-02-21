@@ -1,5 +1,7 @@
+import { Event } from "@/types.js";
+import { executeWithMiddleware, MiddlewareFn } from "@/builder/middleware.js";
 import { FileLoader, LoadContext } from "@/core/loader.js";
-import { SlashCommandKey } from "@/listener/slash.js";
+import { SlashCommandKey } from "@/listener/keys.js";
 import { createSlashBuilder, createBaseBuilder } from "@/utils/builder.js";
 import {
     ChatInputCommandInteraction,
@@ -7,35 +9,39 @@ import {
     SlashCommandSubcommandBuilder,
 } from "discord.js";
 import { ApplicationCommandConfig, DescriptionConfig, File } from "../types.js";
-import type { InferOptionType, Option } from "./option.js";
+import type { InferOptionType, Option } from "./options/base.js";
 
-type SlashOptionsConfig = { [key: string]: Option<any> };
+export type SlashOptionsConfig = { [key: string]: Option<any> };
 
-export type SlashCommandConfig<O extends SlashOptionsConfig> =
-    DescriptionConfig &
-        ApplicationCommandConfig & {
-            options?: O;
-            execute: (
-                context: SlashCommandInteractionContext<O>
-            ) => void | Promise<void>;
-        };
+export type SlashCommandConfig<
+    O extends SlashOptionsConfig,
+    $Context
+> = DescriptionConfig &
+    ApplicationCommandConfig & {
+        options?: O;
+        execute: (
+            context: SlashCommandInteractionContext<O, $Context>
+        ) => void | Promise<void>;
+    };
 
-export type SlashCommandInteractionContext<O extends SlashOptionsConfig> = {
-    event: ChatInputCommandInteraction;
+export type SlashCommandInteractionContext<
+    O extends SlashOptionsConfig,
+    $Context
+> = Event<ChatInputCommandInteraction, $Context> & {
     options: {
         [K in keyof O]: InferOptionType<O[K]>;
     };
 };
 
-export function slash<Options extends SlashOptionsConfig = never>(
-    config: SlashCommandConfig<Options>
-): SlashCommandFile {
-    return new SlashCommandFile(config);
+export function slash<Options extends SlashOptionsConfig, Context = any>(
+    config: SlashCommandConfig<Options, Context>
+): SlashCommandLoader {
+    return new SlashCommandLoader(config);
 }
 
 function loadOptions(
     builder: SharedSlashCommandOptions,
-    config: SlashCommandConfig<any>,
+    config: SlashCommandConfig<never, never>,
     context: LoadContext,
     key: SlashCommandKey
 ): void {
@@ -48,12 +54,13 @@ function loadOptions(
     }
 }
 
-export class SlashCommandFile extends FileLoader {
-    readonly config: SlashCommandConfig<any>;
+export class SlashCommandLoader implements FileLoader {
+    readonly type = "file";
+    readonly config: SlashCommandConfig<any, any>;
     readonly optionMap: [string, Option<never>][];
+    middlewares: MiddlewareFn<any, any>[] = [];
 
-    constructor(config: SlashCommandConfig<any>) {
-        super();
+    constructor(config: SlashCommandConfig<any, any>) {
         this.config = config;
         this.optionMap = Object.entries<Option<never>>(this.config.options);
     }
@@ -67,13 +74,12 @@ export class SlashCommandFile extends FileLoader {
             options[key] = option.parse(v);
         }
 
-        this.config.execute({
-            event: e,
-            options: options,
+        executeWithMiddleware(e, this.middlewares, (e) => {
+            return this.config.execute({ ...e, options });
         });
     };
 
-    override load({ name }: File, context: LoadContext) {
+    load({ name }: File, context: LoadContext) {
         const config = this.config;
         const command = createSlashBuilder(name, config);
         const key: SlashCommandKey = [command.name, null, null];

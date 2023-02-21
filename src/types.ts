@@ -1,13 +1,17 @@
-import { Interaction, LocalizationMap } from "discord.js";
-import { FileLoader, GroupLoader } from "./core/loader.js";
-import { Middleware } from "./middleware/index.js";
+import type { Interaction } from "discord.js";
+import type { LocalizationMap } from "discord.js";
+import type { FileLoader, GroupLoader } from "./core/loader.js";
+
+export type Event<E extends Interaction, Context> = {
+    event: E;
+    ctx: Context;
+};
 
 export type FileExport = {
     default?: FileLoader;
 };
 
 export type MetaExport = {
-    middleware?: (e: Interaction) => void;
     default?: GroupLoader;
 };
 
@@ -60,7 +64,6 @@ export type File = {
  */
 export type Meta = {
     loader?: GroupLoader;
-    middleware?: Middleware;
 };
 
 /**
