@@ -2,17 +2,17 @@ import { ListenerModule } from "@/listener/module.js";
 import { Group, Node, File } from "@/types.js";
 import { ApplicationCommandDataResolvable, Client } from "discord.js";
 
-export abstract class NodeLoader<T extends Node> {
-    /**
-     * @param self The node of current file
-     * @param context
-     */
-    abstract load(self: T, context: LoadContext): void | Promise<void>;
-}
+export type NodeLoader = FileLoader | GroupLoader;
 
-export abstract class FileLoader extends NodeLoader<File> {}
+export type FileLoader = {
+    type: "file";
+    load(self: File, context: LoadContext): void | Promise<void>;
+};
 
-export abstract class GroupLoader extends NodeLoader<Group> {}
+export type GroupLoader = {
+    type: "group";
+    load(self: Group, context: LoadContext): void | Promise<void>;
+};
 
 /**
  * Used for loading commands
@@ -37,14 +37,6 @@ export async function loadNode(node: Node, context: LoadContext) {
             break;
         }
         case "group": {
-            let removeMiddleware: (() => void) | null = null;
-
-            if (node.meta.middleware != null) {
-                removeMiddleware = context.listeners.withMiddleware(
-                    node.meta.middleware
-                );
-            }
-
             if (node.meta.loader != null) {
                 await node.meta.loader.load(node, context);
             } else {
@@ -53,7 +45,6 @@ export async function loadNode(node: Node, context: LoadContext) {
                 }
             }
 
-            removeMiddleware?.();
             break;
         }
     }

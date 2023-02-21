@@ -1,7 +1,6 @@
 import { FileExport } from "@/types.js";
 import { lstatSync, readdirSync } from "fs";
 import { join, parse } from "path";
-import { FileLoader, GroupLoader } from "./index.js";
 import { File, Folder, Group, Meta, MetaExport, Node } from "../types.js";
 import { pathToFileURL } from "url";
 
@@ -40,8 +39,7 @@ export async function readNode(path: string): Promise<Node> {
 export async function readFile(path: string): Promise<File> {
     const { default: loader } = (await asyncImport(path)) as FileExport;
 
-    if (!(loader instanceof FileLoader))
-        throw new Error(`Invalid loader ${path}`);
+    if (loader == null) throw new Error(`Invalid loader ${path}`);
 
     return {
         name: parse(path).name,
@@ -52,19 +50,14 @@ export async function readFile(path: string): Promise<File> {
 }
 
 export async function readMeta(path: string): Promise<Meta> {
-    const { default: loader, middleware } = (await asyncImport(
-        path
-    )) as MetaExport;
+    const { default: loader } = (await asyncImport(path)) as MetaExport;
 
-    if (middleware != null && typeof middleware !== "function")
-        throw new Error(`Invalid middleware ${path}`);
-
-    if (loader != null && !(loader instanceof GroupLoader))
+    console.log(loader);
+    if (loader != null && loader.type !== "group")
         throw new Error(`Invalid loader ${path}`);
 
     return {
         loader,
-        middleware,
     };
 }
 
