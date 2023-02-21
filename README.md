@@ -91,25 +91,35 @@ export default message({
 
 Wanted to run something before executing a command?
 
-With middleware, you can control how an event handler being fired
+With middleware, you can control how an event handler being fired, or pass context to the handler
 
 > commands/\_meta.ts
 
 ```ts
-import type { Middleware } from "discord-fp";
+import { initBuilder } from "discord-fp";
 
-export middleware: Middleware = (e, handler) => {
-    if (something) {
-        return handler(e)
-    } else {
-        //...
-    }
-}
+export const base = initBuilder();
+
+//Don't return anything to prevent calling the handler
+export const safe = base.middleware(({ event, next }) => {
+    return next({
+        ctx: {
+            message: "hello world",
+        },
+        event,
+    });
+});
+```
+
+> commands/your-command.ts
+
+```ts
+export default safe.slash({ ... })
 ```
 
 ## Everything is Type-safe + Null-safe
 
-From config to options values, It's all type-safe!
+From config, middleware context, to options values, It's all type-safe!
 
 ```ts
 export default slash({
@@ -139,7 +149,7 @@ Take a look at `options`:
 
 ## Getting Started
 
-Try our [template](https://github.com/SonMooSans/discord-bot-starter) which includes everything you need 
+Try our [template](https://github.com/SonMooSans/discord-bot-starter) which includes everything you need
 
 Start Discord-FP after the bot is ready
 
@@ -215,22 +225,74 @@ You may use command group & sub command for grouping tons of commands
 
 You may create a `_meta` file for controling how the folder being loaded
 
-By defining **middleware** and **loader**, you can customize almost everything
-
 For example, Command group is just a type of loader
 
 ```ts
-import { Middleware, group } from "discord-fp";
+import { group } from "discord-fp";
 
 //loader
 export default group({
-    description: "My Command group"
-})
+    description: "My Command group",
+});
+```
 
-//middleware
-export middleware: Middleware = (e, handler) => {
-    return handler(e)
-}
+## Middleware
+
+Discord-fp provides type-safe middlewares & context with high code quality
+
+In default, we use static builders from `discord-fp`
+
+```ts
+import { slash } from "discord-fp";
+
+export default slash({ ... });
+```
+
+To enable middleware, you need to use `initBuilder` instead
+
+> commands/\_meta.ts
+
+```ts
+import { initBuilder } from "discord-fp";
+
+export const base = initBuilder();
+```
+
+To add a middleware:
+
+```ts
+export const safe = base.middleware(({ event, next }) => {
+    //do some checking...
+    return next({
+        ctx: {
+            message: "context here",
+        },
+        event,
+    });
+});
+```
+
+Now create a slash command with the middleware enabled:
+
+```ts
+export default safe.slash({ ... })
+```
+
+### Reject events
+
+You can prevent calling the event handler by returning nothing
+
+```ts
+export const safe = base.middleware(({ event, next }) => {
+    if (isInvalid(event)) return;
+
+    return next({
+        ctx: {
+            message: "context here",
+        },
+        event,
+    });
+});
 ```
 
 ## Command Options
