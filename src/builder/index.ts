@@ -1,11 +1,7 @@
 import { MenuCommandLoader } from "@/menu/context.js";
 import { message, MessageMenuCommandConfig } from "@/menu/message.js";
 import { user, UserMenuCommandConfig } from "@/menu/user.js";
-import {
-    group,
-    SlashCommandGroupLoader,
-    SlashGroupConfig,
-} from "@/slash/group.js";
+import { SlashCommandGroupLoader, SlashGroupConfig } from "@/slash/group.js";
 import {
     SlashCommandConfig,
     SlashCommandLoader,

@@ -11,9 +11,7 @@ async function asyncImport(path: string) {
 /**
  * @param files files to search
  */
-export function findMetaFile(
-    files: string[]
-): [meta: string | null, nodes: string[]] {
+function findMetaFile(files: string[]): [meta: string | null, nodes: string[]] {
     var meta: string | null = null;
     const nodes: string[] = [];
 
@@ -36,7 +34,7 @@ export async function readNode(path: string): Promise<Node> {
     }
 }
 
-export async function readFile(path: string): Promise<File> {
+async function readFile(path: string): Promise<File> {
     const { default: loader } = (await asyncImport(path)) as FileExport;
 
     if (loader == null) throw new Error(`Invalid loader ${path}`);
@@ -49,7 +47,7 @@ export async function readFile(path: string): Promise<File> {
     };
 }
 
-export async function readMeta(path: string): Promise<Meta> {
+async function readMeta(path: string): Promise<Meta> {
     const { default: loader } = (await asyncImport(path)) as MetaExport;
 
     if (loader != null && loader.type !== "group")
@@ -60,7 +58,7 @@ export async function readMeta(path: string): Promise<Meta> {
     };
 }
 
-export async function readDir(dir: string): Promise<Folder | Group> {
+async function readDir(dir: string): Promise<Folder | Group> {
     const [meta, files] = findMetaFile(readdirSync(dir));
 
     const nodes: Node[] = [];

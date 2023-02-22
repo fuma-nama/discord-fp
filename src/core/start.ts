@@ -1,4 +1,4 @@
-import { readNode } from "@/index.js";
+import { readNode } from "@/utils/reader.js";
 import { ListenerModule } from "@/listener/module.js";
 import { Node } from "@/types.js";
 import { Client } from "discord.js";
