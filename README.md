@@ -261,7 +261,7 @@ export const base = initBuilder();
 To add a middleware:
 
 ```ts
-export const safe = base.middleware(({ event, next }) => {
+export const admin = base.middleware(({ event, next }) => {
     //do some checking...
     return next({
         ctx: {
@@ -275,7 +275,9 @@ export const safe = base.middleware(({ event, next }) => {
 Now create a slash command with the middleware enabled:
 
 ```ts
-export default safe.slash({ ... })
+import { admin } from "./_meta.js";
+
+export default admin.slash({ ... })
 ```
 
 ### Reject events
@@ -283,7 +285,7 @@ export default safe.slash({ ... })
 You can prevent calling the event handler by returning nothing
 
 ```ts
-export const safe = base.middleware(({ event, next }) => {
+export const admin = base.middleware(({ event, next }) => {
     if (isInvalid(event)) return;
 
     return next({
@@ -292,6 +294,24 @@ export const safe = base.middleware(({ event, next }) => {
         },
         event,
     });
+});
+```
+
+### Nested Middlewares
+
+Discord-FP also allows you to create nested middlewares
+
+```ts
+export const member = base.middleware(({ event, next }) => {
+    return next({
+        event,
+        ctx: "Hello World",
+    });
+});
+
+export const admin = member.middleware(({ event, next, ctx }) => {
+    //ctx === "Hello World"
+    //...
 });
 ```
 
