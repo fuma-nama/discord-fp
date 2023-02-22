@@ -26,7 +26,7 @@ function makeBuilder<Params extends CommandParams>(def: {
         middleware<$Context = {}>(fn: MiddlewareFn<Params, $Context>) {
             return makeBuilder<{
                 _ctx: $Context;
-            }>({ middlewares: [fn, ...(middlewares ?? [])] });
+            }>({ middlewares: [...middlewares, fn] });
         },
         slash(config) {
             const loader = new SlashCommandLoader(config);
