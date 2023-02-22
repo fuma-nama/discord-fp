@@ -1,6 +1,6 @@
 {
     "name": "discord-fp",
-    "version": "2.0.2",
+    "version": "2.0.3",
     "description": "A Beautiful Application Command Framework based on Discord.js",
     "type": "module",
     "main": "dist/index.cjs",
@@ -29,9 +29,9 @@
     "repository": "github:SonMooSans/discord-fp",
     "license": "MIT",
     "devDependencies": {
+        "@changesets/cli": "^2.26.0",
         "@types/hashmap": "^2.3.1",
         "@types/node": "^18.11.18",
-        "changeset": "^0.2.6",
         "discord.js": "^14.7.1",
         "tsup": "^6.5.0",
         "typescript": "^4.9.4"
