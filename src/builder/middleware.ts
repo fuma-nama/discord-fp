@@ -33,7 +33,15 @@ export async function executeWithMiddleware<E extends Interaction>(
         last: MiddlewareResult<E, any>
     ): Promise<MiddlewareResult<Interaction, any> | void> => {
         const fn = middlewares[index];
-        if (fn == null) return last;
+
+        if (fn == null) {
+            await callback({
+                event: last.event as E,
+                ctx: last.ctx,
+            });
+
+            return;
+        }
 
         const result = await fn({
             event: last.event,
@@ -54,15 +62,8 @@ export async function executeWithMiddleware<E extends Interaction>(
         if (result != null) return result;
     };
 
-    const params = await callRecursive(0, {
+    await callRecursive(0, {
         event,
         ctx: {},
     });
-
-    if (params != null) {
-        return await callback({
-            event: params.event as E,
-            ctx: params.ctx,
-        });
-    }
 }
