@@ -19,7 +19,8 @@
 `npm install discord-fp`
 
 > **Note** <br />
-> Example below uses commonjs + typescript, you may convert it into normal common js syntax yourself
+> Example below uses commonjs + typescript + import alias <br />
+> you may convert it into normal common js syntax yourself
 
 ## Slash command in the Best way
 
@@ -28,9 +29,10 @@ Stop writing lots of `interaction.options.get("name")` just for getting the valu
 Let us handle **everything!**
 
 ```typescript
-import { options, slash } from "discord-fp";
+import { options } from "discord-fp";
+import { command } from "@/utils/dfp";
 
-export default slash({
+export default command.slash({
     description: "Say Hello to you",
     options: {
         name: options.string({
@@ -54,9 +56,9 @@ For slash command: `test hello`
 > commands/test/\_meta.ts
 
 ```ts
-import { group } from "discord-fp";
+import { command } from "@/utils/dfp";
 
-export default group({
+export default command.group({
     description: "Your Command Group description",
 });
 ```
@@ -64,9 +66,9 @@ export default group({
 > commands/test/hello.ts
 
 ```ts
-import { slash } from "discord-fp";
+import { command } from "@/utils/dfp";
 
-export default slash({
+export default command.slash({
     //...
 });
 ```
@@ -78,9 +80,9 @@ Not just slash commands, you are able to create context menu commands with **few
 > commands/Delete Message.ts
 
 ```ts
-import { message } from "discord-fp";
+import { command } from "@/utils/dfp";
 
-export default message({
+export default command.message({
     async execute({ event }) {
         await event.reply("I don't wanna delete message!");
     },
@@ -93,15 +95,16 @@ Wanted to run something before executing a command?
 
 With middleware, you can control how an event handler being fired, or pass context to the handler
 
-> commands/\_meta.ts
+> utils/dfp.ts
 
 ```ts
-import { initBuilder } from "discord-fp";
+import { initDiscordFP } from "discord-fp";
 
-export const base = initBuilder();
+export const dfp = initDiscordFP();
+export const command = dfp.command;
 
 //Don't return anything to prevent calling the handler
-export const safe = base.middleware(({ event, next }) => {
+export const protectedCommand = command.middleware(({ event, next }) => {
     return next({
         ctx: {
             message: "hello world",
@@ -114,7 +117,9 @@ export const safe = base.middleware(({ event, next }) => {
 > commands/your-command.ts
 
 ```ts
-export default safe.slash({ ... })
+import { protectedCommand } from "@/utils/dfp";
+
+export default protectedCommand.slash({ ... })
 ```
 
 ## Everything is Type-safe + Null-safe
@@ -122,7 +127,7 @@ export default safe.slash({ ... })
 From config, middleware context, to options values, It's all type-safe!
 
 ```ts
-export default slash({
+export default command.slash({
     description: "Say Hello to you",
     options: {
         enabled: options.boolean({
@@ -151,18 +156,47 @@ Take a look at `options`:
 
 Try our [template](https://github.com/SonMooSans/discord-bot-starter) which includes everything you need
 
-Start Discord-FP after the bot is ready
+Create Discord.js client
+
+> `utils/discord.ts`
 
 ```ts
-import { start } from "discord-fp";
-import { join } from "path";
+import { Client, GatewayIntentBits } from "discord.js";
+
+export const client = new Client({ intents: [GatewayIntentBits.Guilds] });
+```
+
+Init Discord-FP
+
+> `utils/dfp.ts`
+
+```ts
+import { initDiscordFP } from "discord-fp";
+import { client } from "./discord";
+
+export const dfp = initDiscordFP({
+    client,
+});
+
+export const command = dfp.command;
+```
+
+Start Discord-FP after the bot is ready
+
+> `index.ts`
+
+```ts
+import { client } from "./utils/discord";
+import { dfp } from "./utils/dfp";
 
 client.on("ready", () => {
-    start(client, {
+    dfp.start({
         //where to load commands
         load: ["./commands"],
     });
 });
+
+client.login("token");
 ```
 
 ### Create Slash command
@@ -173,11 +207,11 @@ Since it's file-system based, command name is same as its file name
 > commands/hello.ts
 
 ```ts
-import { slash } from "discord-fp";
+import { command } from "@/utils/dfp";
 
-export default slash({
+export default command.slash({
     description: "Say Hello World",
-    execute: async ({ event, options }) => {
+    execute: async ({ event }) => {
         await event.reply(`Hello World`);
     },
 });
@@ -186,8 +220,6 @@ export default slash({
 ### Run your bot
 
 Start your bot, and run the slash command in Discord
-
-> hello
 
 Then you should see the bot replied "Hello World"!
 
@@ -200,9 +232,9 @@ You may use command group & sub command for grouping tons of commands
 3. Define information for the command group in the `_meta` file
 
     ```ts
-    import { group } from "discord-fp";
+    import { command } from "@/utils/dfp";
 
-    export default group({
+    export default command.group({
         description: "My Command group",
     });
     ```
@@ -211,9 +243,10 @@ You may use command group & sub command for grouping tons of commands
    **Inside the folder**, Only slash commands are supported
 
     ```ts
-    import { options, slash } from "discord-fp";
+    import { command } from "@/utils/dfp";
+    import { options } from "discord-fp";
 
-    export default slash({
+    export default command.slash({
         description: "Say Hello World",
         execute: async ({ event, options }) => {
             await event.reply(`Hello World`);
@@ -228,10 +261,10 @@ You may create a `_meta` file for controling how the folder being loaded
 For example, Command group is just a type of loader
 
 ```ts
-import { group } from "discord-fp";
+import { command } from "@/utils/dfp";
 
 //loader
-export default group({
+export default command.group({
     description: "My Command group",
 });
 ```
@@ -240,32 +273,27 @@ export default group({
 
 Discord-fp provides type-safe middlewares & context with high code quality
 
-In default, we use static builders from `discord-fp`
+On the Discord-FP init script:
+
+> utils/dfp.ts
 
 ```ts
-import { slash } from "discord-fp";
+import { initDiscordFP } from "discord-fp";
+import { client } from "./discord.js";
 
-export default slash({ ... });
-```
+export const dfp = initDiscordFP({
+    client,
+});
 
-To enable middleware, you need to use `initBuilder` instead
+export const command = dfp.command;
 
-> commands/\_meta.ts
+//new middleware
+export const protectedCommand = dfp.command.middleware(({ event, next }) => {
+    //check permissions
 
-```ts
-import { initBuilder } from "discord-fp";
-
-export const base = initBuilder();
-```
-
-To add a middleware:
-
-```ts
-export const admin = base.middleware(({ event, next }) => {
-    //do some checking...
     return next({
         ctx: {
-            message: "context here",
+            message: "hello world",
         },
         event,
     });
@@ -275,9 +303,9 @@ export const admin = base.middleware(({ event, next }) => {
 Now create a slash command with the middleware enabled:
 
 ```ts
-import { admin } from "./_meta.js";
+import { protectedCommand } from "@/utils/dfp";
 
-export default admin.slash({ ... })
+export default protectedCommand.slash({ ... })
 ```
 
 ### Reject events
@@ -285,7 +313,7 @@ export default admin.slash({ ... })
 You can prevent calling the event handler by returning nothing
 
 ```ts
-export const admin = base.middleware(({ event, next }) => {
+dfp.command.middleware(({ event, next }) => {
     if (isInvalid(event)) return;
 
     return next({
@@ -302,14 +330,14 @@ export const admin = base.middleware(({ event, next }) => {
 Discord-FP also allows you to create nested middlewares
 
 ```ts
-export const member = base.middleware(({ event, next }) => {
+export const memberCommand = dfp.command.middleware(({ event, next }) => {
     return next({
         event,
         ctx: "Hello World",
     });
 });
 
-export const admin = member.middleware(({ event, next, ctx }) => {
+export const adminCommand = memberCommand.middleware(({ event, next, ctx }) => {
     //ctx === "Hello World"
     //...
 });
@@ -369,21 +397,13 @@ ESM has been supported since v0.2.1
 ### Common js
 
 ```ts
-const { start } = require("discord-fp");
-
-start(client, {
-    load: ["./commands"],
-});
+const { ... } = require("discord-fp");
 ```
 
 ### ESM
 
 ```ts
-import { start } from "discord-fp";
-
-start(client, {
-    load: ["./commands"],
-});
+import { ... } from "discord-fp";
 ```
 
 ## Any issues?
