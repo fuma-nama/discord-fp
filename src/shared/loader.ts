@@ -1,5 +1,5 @@
 import { ListenerModule } from "@/listener/module.js";
-import { Group, Node, File } from "@/types.js";
+import type { Group, Node, File } from "@/shared/reader.js";
 import { ApplicationCommandDataResolvable, Client } from "discord.js";
 
 export type NodeLoader = FileLoader | GroupLoader;

@@ -1,5 +1,4 @@
-import { Event } from "@/types.js";
-import { executeWithMiddleware, MiddlewareFn } from "@/builder/middleware.js";
+import { executeWithMiddleware, MiddlewareFn } from "@/core/middleware.js";
 import { MenuCommandKey } from "@/listener/keys.js";
 import { ListenerModule } from "@/listener/module.js";
 import {
@@ -7,9 +6,10 @@ import {
     MessageContextMenuCommandInteraction,
     UserContextMenuCommandInteraction,
 } from "discord.js";
-import { FileLoader, LoadContext } from "../core/loader.js";
-import { ApplicationCommandConfig, File } from "../types.js";
-import { createContextBuilder } from "../utils/builder.js";
+import { FileLoader, LoadContext } from "../shared/loader.js";
+import { ApplicationCommandConfig, Event } from "../shared/types.js";
+import { createContextBuilder } from "../internal/builder.js";
+import type { File } from "@/shared/reader.js";
 
 type MenuInteraction =
     | UserContextMenuCommandInteraction

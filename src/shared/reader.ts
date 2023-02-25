@@ -1,8 +1,58 @@
-import { FileExport } from "@/types.js";
 import { lstatSync, readdirSync } from "fs";
 import { join, parse } from "path";
-import { File, Folder, Group, Meta, MetaExport, Node } from "../types.js";
 import { pathToFileURL } from "url";
+import { FileLoader, GroupLoader } from "@/shared/loader.js";
+
+/**
+ * base unit
+ */
+export type Node = File | Group | Folder;
+
+/**
+ * A file
+ */
+export type File = {
+    name: string;
+    type: "file";
+    path: string;
+    loader: FileLoader;
+};
+
+/**
+ * The _meta file used for loading a group
+ *
+ * Notice that it's not a type of node
+ */
+export type Meta = {
+    loader?: GroupLoader;
+};
+
+/**
+ * A dir with _meta file
+ */
+export type Group = {
+    name: string;
+    type: "group";
+    path: string;
+    meta: Meta;
+    nodes: Node[];
+};
+/**
+ * A folder which contains nodes inside
+ */
+export type Folder = {
+    type: "folder";
+    path: string;
+    nodes: Node[];
+};
+
+export type FileExport = {
+    default?: FileLoader;
+};
+
+export type MetaExport = {
+    default?: GroupLoader;
+};
 
 async function asyncImport(path: string) {
     return await import(pathToFileURL(path).href);

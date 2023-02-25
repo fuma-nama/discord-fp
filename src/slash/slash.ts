@@ -1,15 +1,19 @@
-import { Event } from "@/types.js";
-import { executeWithMiddleware, MiddlewareFn } from "@/builder/middleware.js";
-import { FileLoader, LoadContext } from "@/core/loader.js";
+import { Event } from "@/shared/types.js";
+import { executeWithMiddleware, MiddlewareFn } from "@/core/middleware.js";
+import { FileLoader, LoadContext } from "@/shared/loader.js";
 import { SlashCommandKey } from "@/listener/keys.js";
-import { createSlashBuilder, createBaseBuilder } from "@/utils/builder.js";
+import { createSlashBuilder, createBaseBuilder } from "@/internal/builder.js";
 import {
     ChatInputCommandInteraction,
     SharedSlashCommandOptions,
     SlashCommandSubcommandBuilder,
 } from "discord.js";
-import { ApplicationCommandConfig, DescriptionConfig, File } from "../types.js";
+import type { File } from "@/shared/reader.js";
 import type { InferOptionType, Option } from "./options/base.js";
+import type {
+    ApplicationCommandConfig,
+    DescriptionConfig,
+} from "@/shared/types.js";
 
 export type SlashOptionsConfig = { [key: string]: Option<any> };
 
@@ -33,12 +37,6 @@ export type SlashCommandInteractionContext<
     };
 };
 
-export function slash<Options extends SlashOptionsConfig, Context = any>(
-    config: SlashCommandConfig<Options, Context>
-): SlashCommandLoader {
-    return new SlashCommandLoader(config);
-}
-
 function loadOptions(
     builder: SharedSlashCommandOptions,
     config: SlashCommandConfig<never, never>,
@@ -57,12 +55,12 @@ function loadOptions(
 export class SlashCommandLoader implements FileLoader {
     readonly type = "file";
     readonly config: SlashCommandConfig<any, any>;
-    readonly optionMap: [string, Option<never>][];
+    readonly optionMap: [string, Option<unknown>][];
     middlewares: MiddlewareFn<any, any>[] = [];
 
     constructor(config: SlashCommandConfig<any, any>) {
         this.config = config;
-        this.optionMap = Object.entries<Option<never>>(this.config.options);
+        this.optionMap = Object.entries<Option<unknown>>(this.config.options);
     }
 
     onEvent = (e: ChatInputCommandInteraction) => {

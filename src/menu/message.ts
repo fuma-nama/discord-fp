@@ -9,7 +9,9 @@ export type MessageMenuCommandConfig<Context> = ContextCommandConfig<
     Context
 >;
 
-export function message(config: MessageMenuCommandConfig<any>) {
+export function createMessageMenuCommandLoader(
+    config: MessageMenuCommandConfig<any>
+) {
     return createMenuCommandLoader({
         config,
         type: ApplicationCommandType.Message,

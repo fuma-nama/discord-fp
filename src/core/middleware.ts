@@ -1,6 +1,6 @@
-import { Event } from "../types.js";
+import { Event } from "../shared/types.js";
 import { Interaction } from "discord.js";
-import { CommandParams } from "./index.js";
+import { CommandParams } from "./command.js";
 
 export type MiddlewareFn<
     Params extends CommandParams,

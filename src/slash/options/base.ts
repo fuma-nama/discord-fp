@@ -1,4 +1,4 @@
-import { LoadContext } from "@/core/loader.js";
+import { LoadContext } from "@/shared/loader.js";
 import { AutoCompleteKey, SlashCommandKey } from "@/listener/keys.js";
 import {
     ApplicationCommandOptionBase,

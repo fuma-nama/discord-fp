@@ -9,7 +9,9 @@ export type UserMenuCommandConfig<Context> = ContextCommandConfig<
     Context
 >;
 
-export function user(config: UserMenuCommandConfig<any>) {
+export function createUserMenuCommandLoader(
+    config: UserMenuCommandConfig<any>
+) {
     return createMenuCommandLoader({
         config,
         type: ApplicationCommandType.User,

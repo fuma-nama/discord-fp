@@ -1,6 +1,12 @@
 import { MenuCommandLoader } from "@/menu/context.js";
-import { message, MessageMenuCommandConfig } from "@/menu/message.js";
-import { user, UserMenuCommandConfig } from "@/menu/user.js";
+import {
+    createMessageMenuCommandLoader,
+    MessageMenuCommandConfig,
+} from "@/menu/message.js";
+import {
+    createUserMenuCommandLoader,
+    UserMenuCommandConfig,
+} from "@/menu/user.js";
 import { SlashCommandGroupLoader, SlashGroupConfig } from "@/slash/group.js";
 import {
     SlashCommandConfig,
@@ -15,7 +21,7 @@ export type CommandParams<TContextOut = unknown> = {
 
 function makeBuilder<Params extends CommandParams>(def: {
     middlewares: MiddlewareFn<any, any>[];
-}): Builder<Params> {
+}): CommandBuilder<Params> {
     const { middlewares } = def;
 
     return {
@@ -36,13 +42,13 @@ function makeBuilder<Params extends CommandParams>(def: {
             return loader;
         },
         user(config) {
-            const loader = user(config);
+            const loader = createUserMenuCommandLoader(config);
             loader.middlewares = middlewares;
 
             return loader;
         },
         message(config) {
-            const loader = message(config);
+            const loader = createMessageMenuCommandLoader(config);
             loader.middlewares = middlewares;
 
             return loader;
@@ -50,16 +56,16 @@ function makeBuilder<Params extends CommandParams>(def: {
     };
 }
 
-export function initBuilder(): Builder<{ _ctx: {} }> {
+export function initCommandBuilder(): CommandBuilder<{ _ctx: {} }> {
     return makeBuilder({
         middlewares: [],
     });
 }
 
-export interface Builder<Params extends CommandParams> {
+export interface CommandBuilder<Params extends CommandParams> {
     middleware<$Context = {}>(
         fn: MiddlewareFn<Params, $Context>
-    ): Builder<{
+    ): CommandBuilder<{
         _ctx: $Context;
     }>;
 
@@ -73,5 +79,3 @@ export interface Builder<Params extends CommandParams> {
 
     group(config: SlashGroupConfig): SlashCommandGroupLoader;
 }
-
-export * from "./middleware.js";
