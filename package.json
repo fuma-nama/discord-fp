@@ -1,6 +1,6 @@
 {
     "name": "discord-fp",
-    "version": "3.0.0-alpha.0",
+    "version": "3.0.0",
     "description": "A Beautiful Application Command Framework based on Discord.js",
     "type": "module",
     "main": "dist/index.cjs",

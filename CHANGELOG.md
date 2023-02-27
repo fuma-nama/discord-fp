@@ -1,5 +1,11 @@
 # discord-fp
 
+## 3.0.0
+
+### Major Changes
+
+- 1d46689: Remove static builders, use `initDiscordFP` instead
+
 ## 3.0.0-alpha.0
 
 ### Major Changes
