@@ -1,6 +1,4 @@
 import { readNode, Node } from "@/shared/reader.js";
-import { ListenerModule } from "@/listener/module.js";
-import { Client } from "discord.js";
 import { resolve } from "path";
 import { LoadContext, loadNode } from "../shared/loader.js";
 import { registerCommands, RegisterConfig } from "./register.js";
@@ -30,16 +28,15 @@ const ready = "Ready";
  * Start and register commands
  */
 export async function start(
-    client: Client,
+    context: LoadContext,
     options: StartOptions
 ): Promise<StartResult> {
     console.time(ready);
     const loaded: Node[] = [];
-    const context: LoadContext = options.defaultContext ?? {
-        client,
-        commands: [],
-        listeners: new ListenerModule(),
-    };
+
+    if (options.defaultContext) {
+        context = options.defaultContext;
+    }
 
     console.log("Loading commands...");
 

@@ -1,4 +1,5 @@
 import { start, StartOptions, StartResult } from "@/core/start.js";
+import { ListenerModule } from "@/listener/module.js";
 import type { Node } from "@/shared/reader.js";
 import { Client } from "discord.js";
 import {
@@ -16,19 +17,28 @@ export interface Dfp<Params extends CommandParams> {
     start(options: StartOptions): Promise<StartResult>;
     loaded: Node[];
     client: Client | null;
+    listener: ListenerModule;
 }
 
 export function initDiscordFP(config: DfpConfig) {
     const dfp: Dfp<{ _ctx: {} }> = {
         command: initCommandBuilder(),
         loaded: [],
+        listener: new ListenerModule(),
         client: config.client ?? null,
         async start(options) {
             if (this.client == null) {
                 throw new Error("The client can't be null");
             }
 
-            const result = await start(this.client, options);
+            const result = await start(
+                {
+                    client: this.client,
+                    listeners: new ListenerModule(),
+                    commands: [],
+                },
+                options
+            );
 
             this.loaded = result.loaded;
             return result;
