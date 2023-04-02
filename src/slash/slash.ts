@@ -60,7 +60,7 @@ export class SlashCommandLoader implements FileLoader {
 
     constructor(config: SlashCommandConfig<any, any>) {
         this.config = config;
-        this.optionMap = Object.entries<Option<unknown>>(this.config.options);
+        this.optionMap = Object.entries<Option<unknown>>(this.config.options ?? {});
     }
 
     onEvent = (e: ChatInputCommandInteraction) => {
