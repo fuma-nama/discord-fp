@@ -20,7 +20,10 @@ export interface Dfp<Params extends CommandParams> {
     listener: ListenerModule;
 }
 
-export function initDiscordFP(config: DfpConfig) {
+/** @deprecated Always call this function with config. */
+export function initDiscordFP(): Dfp<{ _ctx: {} }>;
+export function initDiscordFP(config: DfpConfig): Dfp<{ _ctx: {} }>;
+export function initDiscordFP(config: DfpConfig = {}) {
     const dfp: Dfp<{ _ctx: {} }> = {
         command: initCommandBuilder(),
         loaded: [],
