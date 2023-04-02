@@ -15,7 +15,9 @@
     },
     "scripts": {
         "build": "tsup --dts",
-        "test": "echo \"No test specified\""
+        "test": "echo \"No test specified\"",
+        "version": "changeset version",
+        "release": "changeset publish"
     },
     "keywords": [
         "discord.js",
