@@ -1,0 +1,10 @@
+{
+    "extends": "@discord-fp/tsconfig/base.json",
+    "include": ["."],
+    "exclude": ["dist", "node_modules"],
+    "compilerOptions": {
+        "paths": {
+            "@/*": ["./src/*"]
+        }
+    }
+}

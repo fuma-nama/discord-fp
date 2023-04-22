@@ -1,14 +1,15 @@
 {
+    "$schema": "https://json.schemastore.org/tsconfig",
+    "display": "Default",
     "compilerOptions": {
         "outDir": "dist",
         "esModuleInterop": true,
         "module": "es2020",
         "moduleResolution": "nodenext",
         "target": "ES2022",
+        "strict": true,
         "strictNullChecks": true,
-        "noImplicitThis": true,
-        "paths": {
-            "@/*": ["./src/*"]
-        }
-    }
+        "noImplicitThis": true
+    },
+    "exclude": ["node_modules"]
 }

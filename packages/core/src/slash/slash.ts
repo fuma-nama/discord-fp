@@ -39,13 +39,13 @@ export type SlashCommandInteractionContext<
 
 function loadOptions(
     builder: SharedSlashCommandOptions,
-    config: SlashCommandConfig<never, never>,
+    config: SlashCommandConfig<SlashOptionsConfig, unknown>,
     context: LoadContext,
     key: SlashCommandKey
 ): void {
     const options = config.options ?? {};
 
-    for (const [name, info] of Object.entries<Option<never>>(options)) {
+    for (const [name, info] of Object.entries(options)) {
         const build = info.build(name, key, context);
 
         builder.options.push(build);
@@ -54,13 +54,15 @@ function loadOptions(
 
 export class SlashCommandLoader implements FileLoader {
     readonly type = "file";
-    readonly config: SlashCommandConfig<any, any>;
+    readonly config: SlashCommandConfig<SlashOptionsConfig, unknown>;
     readonly optionMap: [string, Option<unknown>][];
     middlewares: MiddlewareFn<any, any>[] = [];
 
-    constructor(config: SlashCommandConfig<any, any>) {
+    constructor(config: SlashCommandConfig<SlashOptionsConfig, unknown>) {
         this.config = config;
-        this.optionMap = Object.entries<Option<unknown>>(this.config.options ?? {});
+        this.optionMap = Object.entries<Option<unknown>>(
+            this.config.options ?? {}
+        );
     }
 
     onEvent = (e: ChatInputCommandInteraction) => {

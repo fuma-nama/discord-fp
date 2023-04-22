@@ -31,7 +31,9 @@ function makeBuilder<Params extends CommandParams>(def: {
             }>({ middlewares: [...middlewares, fn] });
         },
         slash(config) {
-            const loader = new SlashCommandLoader(config);
+            const loader = new SlashCommandLoader(
+                config as SlashCommandConfig<SlashOptionsConfig, unknown>
+            );
             loader.middlewares = middlewares;
 
             return loader;
