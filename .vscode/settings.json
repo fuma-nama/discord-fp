@@ -1,1 +1,3 @@
-{}
+{
+    "deno.enablePaths": ["../examples/deno-bot"]
+}
