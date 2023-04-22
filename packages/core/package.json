@@ -31,8 +31,7 @@
     "devDependencies": {
         "@types/hashmap": "^2.3.1",
         "@types/node": "^18.11.18",
-        "discord.js": "^14.9.0",
-        "@discord-fp/tsconfig": "workspace:*"
+        "discord.js": "^14.9.0"
     },
     "dependencies": {
         "hashmap": "^2.4.0"

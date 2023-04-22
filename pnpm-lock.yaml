@@ -20,9 +20,6 @@ importers:
         specifier: ^2.4.0
         version: 2.4.0
     devDependencies:
-      '@discord-fp/tsconfig':
-        specifier: workspace:*
-        version: link:../tsconfig
       '@types/hashmap':
         specifier: ^2.3.1
         version: 2.3.1
@@ -32,8 +29,6 @@ importers:
       discord.js:
         specifier: ^14.9.0
         version: 14.9.0
-
-  packages/tsconfig: {}
 
 packages:
 
