@@ -1,0 +1,10 @@
+{
+    "imports": {
+        "hashmap": "npm:hashmap",
+        "discordfp": "./packages/discordeno/dist/index.js",
+        "discordeno": "https://deno.land/x/discordeno@18.0.1/mod.ts",
+        "url": "node:url",
+        "path": "node:path",
+        "fs": "node:fs"
+    }
+}

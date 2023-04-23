@@ -24,7 +24,7 @@ export function createBaseBuilder<B extends SharedNameAndDescription>(
     builder = builder
         .setName(config.name ?? name)
         .setNameLocalizations(config.names ?? {})
-        .setDescriptionLocalizations(config.names ?? {})
+        .setDescriptionLocalizations(config.descriptions ?? {})
         .setDescription(config.description);
 
     return builder;

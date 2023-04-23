@@ -1,0 +1,6 @@
+{
+    "tasks": {
+        "start": "deno run -A main.ts"
+    },
+    "importMap": "../../denoImportMap.json"
+}

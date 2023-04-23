@@ -1,3 +1,4 @@
 {
-    "deno.enablePaths": ["../examples/deno-bot"]
+    "deno.enablePaths": ["./examples/deno-bot"],
+    "deno.config": "./examples/deno-bot/deno.json"
 }

@@ -16,9 +16,9 @@ importers:
 
   examples/djs-bot:
     dependencies:
-      '@discord-fp/core':
+      '@discord-fp/djs':
         specifier: workspace:*
-        version: link:../../packages/core
+        version: link:../../packages/djs
       discord.js:
         specifier: ^14.9.0
         version: 14.9.0
@@ -30,7 +30,28 @@ importers:
         specifier: ^3.12.2
         version: 3.12.2
 
-  packages/core:
+  packages/discordeno:
+    dependencies:
+      dist:
+        specifier: link:D:/Dev/frameworks/discord-fp/packages/discordeno/dist
+        version: link:dist
+      hashmap:
+        specifier: ^2.4.0
+        version: 2.4.0
+    devDependencies:
+      '@types/hashmap':
+        specifier: ^2.3.1
+        version: 2.3.1
+      '@types/node':
+        specifier: ^18.11.18
+        version: 18.11.18
+      discordeno:
+        specifier: ^18.0.1
+        version: 18.0.1
+
+  packages/discordeno/dist/package: {}
+
+  packages/djs:
     dependencies:
       hashmap:
         specifier: ^2.4.0
@@ -258,6 +279,21 @@ packages:
       fs-extra: 7.0.1
       human-id: 1.0.2
       prettier: 2.8.4
+    dev: true
+
+  /@deno/shim-deno-test@0.3.3:
+    resolution: {integrity: sha512-Ge0Tnl7zZY0VvEfgsyLhjid8DzI1d0La0dgm+3m0/A8gZXgp5xwlyIyue5e4SCUuVB/3AH/0lun9LcJhhTwmbg==}
+    dev: true
+
+  /@deno/shim-deno@0.9.0:
+    resolution: {integrity: sha512-iP+qdI4Oy/Mw9yv40TqdjNKL+stpKDo8drki2cKisTXgZf+GoIdMhIuODxSypRyv6wxIuHNx7ZiKE3Sl3kAHuw==}
+    dependencies:
+      '@deno/shim-deno-test': 0.3.3
+      which: 2.0.2
+    dev: true
+
+  /@deno/shim-timers@0.1.0:
+    resolution: {integrity: sha512-XFRnB5Rtbkd5RiYHwhugNK9gvDgYXmFTUOT5dmhWCKG7WnOWZggbJMnH1NcyYS3QgHvmaTOaHCyNFNSv57j3Dg==}
     dev: true
 
   /@discordjs/builders@1.6.1:
@@ -984,6 +1020,18 @@ packages:
     transitivePeerDependencies:
       - bufferutil
       - utf-8-validate
+
+  /discordeno@18.0.1:
+    resolution: {integrity: sha512-d3D/HpC39YGInmxy2HK90kPpMMu2gYYsWuwtEEFPWpq2hlR9dvad4ihvLursPz5bj4Ob1NWOgPv3kz/bwMSIpw==}
+    dependencies:
+      '@deno/shim-deno': 0.9.0
+      '@deno/shim-timers': 0.1.0
+      undici: 5.22.0
+      ws: 8.13.0
+    transitivePeerDependencies:
+      - bufferutil
+      - utf-8-validate
+    dev: true
 
   /dotenv@16.0.3:
     resolution: {integrity: sha512-7GO6HghkA5fYG9TYnNxi14/7K9f5occMlp3zXAuSxn7CKCxt9xbNWG7yF8hTCSUchlfWSe3uLmlPfigevRItzQ==}

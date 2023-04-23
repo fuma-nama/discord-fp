@@ -1,4 +1,4 @@
-import { initDiscordFP } from "@discord-fp/core";
+import { initDiscordFP } from "@discord-fp/djs";
 import { client } from "./discord.js";
 
 export const dfp = initDiscordFP({

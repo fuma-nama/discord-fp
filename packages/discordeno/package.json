@@ -1,0 +1,47 @@
+{
+    "name": "@discord-fp/discordeno",
+    "version": "3.0.0",
+    "description": "A Beautiful Application Command Framework for Discordeno",
+    "type": "module",
+    "main": "dist/index.cjs",
+    "module": "./dist/index.js",
+    "types": "./dist/index.d.ts",
+    "exports": {
+        ".": {
+            "require": "./dist/index.cjs",
+            "import": "./dist/index.js",
+            "types": "./dist/index.d.ts"
+        }
+    },
+    "scripts": {
+        "build": "tsup src/index.ts --dts --clean --format esm,cjs",
+        "dev": "tsup src/index.ts --dts --clean --format esm,cjs --watch",
+        "test": "echo \"No test specified\""
+    },
+    "keywords": [
+        "discord.js",
+        "slash command",
+        "application command"
+    ],
+    "files": [
+        "./dist"
+    ],
+    "author": "Money SonMooSans",
+    "repository": "github:SonMooSans/discord-fp",
+    "license": "MIT",
+    "devDependencies": {
+        "@types/hashmap": "^2.3.1",
+        "@types/node": "^18.11.18",
+        "discordeno": "^18.0.1"
+    },
+    "dependencies": {
+        "dist": "link:D:/Dev/frameworks/discord-fp/packages/discordeno/dist",
+        "hashmap": "^2.4.0"
+    },
+    "peerDependencies": {
+        "discordeno": "18.x"
+    },
+    "publishConfig": {
+        "access": "public"
+    }
+}
