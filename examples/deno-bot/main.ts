@@ -9,6 +9,7 @@ const bot = createBot({
 });
 
 export const dfp = initDiscordFP();
+export const command = dfp.command;
 
 dfp.start({
     bot: bot,

@@ -9,7 +9,7 @@ import {
     ApplicationCommandOptionTypes,
 } from "discordeno";
 import type { File } from "@/shared/reader.js";
-import type { InferOptionType, Option } from "./options/base.js";
+import type { InferOptionType, Option } from "./options/factory.js";
 import type {
     ApplicationCommandConfig,
     DescriptionConfig,
@@ -63,10 +63,35 @@ export class SlashCommandLoader implements FileLoader {
     }
 
     onEvent = (e: Interaction) => {
+        const raw = getRawOptions(e);
         const options: any = {};
 
         for (const [key, option] of this.optionMap) {
-            const data = e.data?.options?.find((v) => v.name === key);
+            let data = raw?.find((v) => v.name === key);
+
+            if (data != null) {
+                const value = BigInt(data.value);
+                const resolved = e.data?.resolved!;
+
+                if (data.type === ApplicationCommandOptionTypes.User) {
+                    data.value = {
+                        user: resolved.users?.get(value),
+                        member: resolved.members?.get(value) ?? undefined,
+                    };
+                }
+
+                if (data.type === ApplicationCommandOptionTypes.Attachment) {
+                    data.value = resolved.attachments?.get(value);
+                }
+
+                if (data.type === ApplicationCommandOptionTypes.Channel) {
+                    data.value = resolved.channels?.get(value);
+                }
+
+                if (data.type === ApplicationCommandOptionTypes.Role) {
+                    data.value = resolved.roles?.get(value);
+                }
+            }
 
             options[key] = option.parse(data?.value ?? null);
         }
@@ -105,4 +130,24 @@ export class SlashCommandLoader implements FileLoader {
         context.listeners.slash.set(key, this.onEvent);
         return command;
     }
+}
+
+function getRawOptions(e: Interaction): {
+    name: string;
+    value?: any;
+    type: ApplicationCommandOptionTypes;
+}[] {
+    const first = e.data?.options?.[0];
+
+    if (first == null) {
+        return [];
+    }
+    if (first.type === ApplicationCommandOptionTypes.SubCommandGroup) {
+        return first.options?.[0].options ?? [];
+    }
+    if (first.type === ApplicationCommandOptionTypes.SubCommand) {
+        return first.options ?? [];
+    }
+
+    return e.data?.options ?? [];
 }

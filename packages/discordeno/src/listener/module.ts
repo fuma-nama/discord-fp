@@ -1,9 +1,9 @@
 import {
-    ApplicationCommandTypes,
     Interaction,
     InteractionTypes,
     EventHandlers,
     ApplicationCommandOptionTypes,
+    ApplicationCommandTypes,
 } from "discordeno";
 import { MenuCommandKey, SlashCommandKey, AutoCompleteKey } from "./keys.js";
 import HashMap from "hashmap";
@@ -11,7 +11,6 @@ import { AutocompleteInteraction, MenuInteraction } from "@/index.js";
 
 type Listener<E> = (event: E) => void | Promise<void>;
 
-type a = EventHandlers["interactionCreate"];
 export class ListenerModule {
     readonly slash = new HashMap<SlashCommandKey, Listener<Interaction>>();
     readonly user = new HashMap<MenuCommandKey, Listener<MenuInteraction>>();
@@ -24,42 +23,61 @@ export class ListenerModule {
     /**
      * Handle interaction event
      */
-    readonly handle: EventHandlers["interactionCreate"] = (_, e) => {
-        if (e.data == null) return;
+    readonly handle: EventHandlers["interactionCreate"] = (_, interaction) => {
+        if (interaction.data == null) return;
 
-        console.log(e);
+        //waiting for https://github.com/discordeno/discordeno/pull/2987
+        const e = interaction as Interaction & {
+            data: {
+                type: ApplicationCommandTypes;
+            };
+        };
+        e.data.type = e.data.type ?? ApplicationCommandTypes.ChatInput;
 
         if (
             e.type === InteractionTypes.ApplicationCommand &&
-            "type" in e.data &&
             e.data.type === ApplicationCommandTypes.ChatInput
         ) {
-            const subcommandGroup = e.data.options?.find(
-                (o) => o.type === ApplicationCommandOptionTypes.SubCommandGroup
-            );
-            const subcommad = e.data.options?.find(
-                (o) => o.type === ApplicationCommandOptionTypes.SubCommand
-            );
+            let key: SlashCommandKey;
 
-            const key: SlashCommandKey = [
-                e.data.name,
-                subcommandGroup?.name ?? null,
-                subcommad?.name ?? null,
-            ];
+            if (
+                e.data.options?.[0].type ===
+                ApplicationCommandOptionTypes.SubCommandGroup
+            ) {
+                const group = e.data.options[0];
+
+                if (
+                    group.options?.[0]?.type ===
+                    ApplicationCommandOptionTypes.SubCommand
+                ) {
+                    key = [e.data.name, group.name, group.options[0].name];
+                } else {
+                    key = [e.data.name, group.name, null];
+                }
+            } else if (
+                e.data.options?.[0].type ===
+                ApplicationCommandOptionTypes.SubCommand
+            ) {
+                const subcommand = e.data.options[0];
+
+                key = [e.data.name, null, subcommand.name];
+            } else {
+                key = [e.data.name, null, null];
+            }
 
             const handler = this.slash.get(key);
 
-            return handler?.(e);
+            if (handler != null) {
+                return handler?.(e);
+            }
         }
 
-        if (
-            e.type === InteractionTypes.ApplicationCommand &&
-            "type" in e.data &&
-            (e.data.type === ApplicationCommandTypes.Message ||
-                e.data.type === ApplicationCommandTypes.User)
-        ) {
+        if (e.type === InteractionTypes.ApplicationCommand) {
             const key: MenuCommandKey = [e.data.name];
-            const handler = this.message.get(key);
+            const handler =
+                e.data.type === ApplicationCommandTypes.Message
+                    ? this.message.get(key)
+                    : this.user.get(key);
 
             return handler?.(e);
         }
