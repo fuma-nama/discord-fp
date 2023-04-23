@@ -1,6 +1,6 @@
 import { start, StartOptions, StartResult } from "@/core/start.js";
 import { ListenerModule } from "@/listener/module.js";
-import type { Node } from "@/shared/reader.js";
+import type { Node } from "@/utils/reader.js";
 import {
     CommandBuilder,
     CommandParams,

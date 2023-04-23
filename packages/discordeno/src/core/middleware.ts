@@ -1,5 +1,5 @@
 import { Interaction } from "discordeno";
-import { Event } from "../shared/types.js";
+import { Event } from "../utils/types.js";
 import { CommandParams } from "./command.js";
 
 export type MiddlewareFn<

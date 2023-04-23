@@ -1,8 +1,7 @@
-import { ApplicationCommandConfig, DescriptionConfig } from "@/shared/types.js";
-import { debugNode } from "@/internal/log.js";
-import { GroupLoader, LoadContext } from "@/shared/loader.js";
-import { Node, Group } from "@/shared/reader.js";
-import { createSlashBuilder } from "@/internal/builder.js";
+import { Node, Group } from "@/utils/reader.js";
+import { GroupLoader, LoadContext } from "@/utils/loader.js";
+import { ApplicationCommandConfig, DescriptionConfig } from "@/utils/types.js";
+import { createSlashBuilder } from "@/utils/builder.js";
 import { SlashCommandLoader } from "./slash.js";
 import {
     ApplicationCommandOption,
@@ -93,4 +92,8 @@ export class SlashCommandGroupLoader implements GroupLoader {
 
         return group;
     }
+}
+
+function debugNode(node: Node, message: string) {
+    console.debug(`${node.path} (${node.type})`, message);
 }

@@ -7,7 +7,8 @@ import {
 } from "discordeno";
 import { MenuCommandKey, SlashCommandKey, AutoCompleteKey } from "./keys.js";
 import HashMap from "hashmap";
-import { AutocompleteInteraction, MenuInteraction } from "@/index.js";
+import { MenuInteraction } from "@/index.js";
+import { AutocompleteInteraction } from "@/utils/types.js";
 
 type Listener<E> = (event: E) => void | Promise<void>;
 

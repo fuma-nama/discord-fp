@@ -1,6 +1,6 @@
-import { readNode, Node } from "@/shared/reader.js";
+import { readNode, Node } from "@/utils/reader.js";
+import { LoadContext, loadNode } from "@/utils/loader.js";
 import { resolve } from "path";
-import { LoadContext, loadNode } from "../shared/loader.js";
 import { registerCommands, RegisterOptions } from "./register.js";
 import { Bot } from "discordeno";
 import { ListenerModule } from "@/index.js";

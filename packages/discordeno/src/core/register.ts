@@ -3,7 +3,7 @@ import {
     upsertGlobalApplicationCommands,
     upsertGuildApplicationCommands,
 } from "discordeno";
-import { LoadContext } from "../shared/loader.js";
+import { LoadContext } from "../utils/loader.js";
 
 export type RegisterOptions = {
     /**

@@ -1,7 +1,7 @@
 import { lstatSync, readdirSync } from "fs";
 import { join, parse } from "path";
 import { pathToFileURL } from "url";
-import { FileLoader, GroupLoader } from "@/shared/loader.js";
+import { FileLoader, GroupLoader } from "./loader.js";
 
 /**
  * base unit

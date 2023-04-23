@@ -1,19 +1,19 @@
-import { Event } from "@/shared/types.js";
+import { Event } from "@/utils/types.js";
 import { executeWithMiddleware, MiddlewareFn } from "@/core/middleware.js";
-import { FileLoader, LoadContext } from "@/shared/loader.js";
 import { SlashCommandKey } from "@/listener/keys.js";
-import { createSlashBuilder } from "@/internal/builder.js";
+import { createSlashBuilder } from "@/utils/builder.js";
 import {
     Interaction,
     ApplicationCommandOption,
     ApplicationCommandOptionTypes,
 } from "discordeno";
-import type { File } from "@/shared/reader.js";
+import type { FileLoader, LoadContext } from "@/utils/loader.js";
+import type { File } from "@/utils/reader.js";
 import type { InferOptionType, Option } from "./options/factory.js";
 import type {
     ApplicationCommandConfig,
     DescriptionConfig,
-} from "@/shared/types.js";
+} from "@/utils/types.js";
 
 export type SlashOptionsConfig = { [key: string]: Option<any> };
 
@@ -70,26 +70,27 @@ export class SlashCommandLoader implements FileLoader {
             let data = raw?.find((v) => v.name === key);
 
             if (data != null) {
-                const value = BigInt(data.value);
                 const resolved = e.data?.resolved!;
 
                 if (data.type === ApplicationCommandOptionTypes.User) {
+                    const id = BigInt(data.value);
+
                     data.value = {
-                        user: resolved.users?.get(value),
-                        member: resolved.members?.get(value) ?? undefined,
+                        user: resolved.users?.get(id),
+                        member: resolved.members?.get(id) ?? undefined,
                     };
                 }
 
                 if (data.type === ApplicationCommandOptionTypes.Attachment) {
-                    data.value = resolved.attachments?.get(value);
+                    data.value = resolved.attachments?.get(BigInt(data.value));
                 }
 
                 if (data.type === ApplicationCommandOptionTypes.Channel) {
-                    data.value = resolved.channels?.get(value);
+                    data.value = resolved.channels?.get(BigInt(data.value));
                 }
 
                 if (data.type === ApplicationCommandOptionTypes.Role) {
-                    data.value = resolved.roles?.get(value);
+                    data.value = resolved.roles?.get(BigInt(data.value));
                 }
             }
 

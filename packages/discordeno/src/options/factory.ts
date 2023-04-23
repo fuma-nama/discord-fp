@@ -1,4 +1,4 @@
-import { LoadContext } from "@/shared/loader.js";
+import { LoadContext } from "@/utils/loader.js";
 import { AutoCompleteKey, SlashCommandKey } from "@/listener/keys.js";
 import {
     ApplicationCommandOption,
@@ -6,7 +6,7 @@ import {
     ApplicationCommandOptionTypes,
     Localization,
 } from "discordeno";
-import { AutocompleteInteraction } from "@/shared/types.js";
+import { AutocompleteInteraction } from "@/utils/types.js";
 
 export type InferOptionType<T> = T extends Option<infer P> ? P : never;
 

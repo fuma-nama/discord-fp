@@ -35,7 +35,6 @@
         "discordeno": "^18.0.1"
     },
     "dependencies": {
-        "dist": "link:D:/Dev/frameworks/discord-fp/packages/discordeno/dist",
         "hashmap": "^2.4.0"
     },
     "peerDependencies": {

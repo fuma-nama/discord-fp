@@ -1,6 +1,6 @@
-import { ListenerModule } from "@/listener/module.js";
-import type { Group, Node, File } from "@/shared/reader.js";
+import { ListenerModule } from "@/index.js";
 import { CreateApplicationCommand } from "discordeno";
+import type { Group, Node, File } from "./reader.js";
 
 export type NodeLoader = FileLoader | GroupLoader;
 
@@ -15,12 +15,12 @@ export type GroupLoader = {
 };
 
 /**
- * Used for loading commands
+ * Used for loading command, You may extend this type
  */
-export type LoadContext = {
-    commands: CreateApplicationCommand[];
+export interface LoadContext {
     listeners: ListenerModule;
-};
+    commands: CreateApplicationCommand[];
+}
 
 export async function loadNode(node: Node, context: LoadContext) {
     switch (node.type) {

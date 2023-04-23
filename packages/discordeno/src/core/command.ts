@@ -1,18 +1,16 @@
-import { MenuCommandLoader } from "@/menu/context.js";
+import { MenuCommandLoader } from "@/menu.js";
 import {
     createMessageMenuCommandLoader,
     MessageMenuCommandConfig,
-} from "@/menu/message.js";
-import {
     createUserMenuCommandLoader,
     UserMenuCommandConfig,
-} from "@/menu/user.js";
-import { SlashCommandGroupLoader, SlashGroupConfig } from "@/slash/group.js";
+} from "@/menu.js";
+import { SlashCommandGroupLoader, SlashGroupConfig } from "@/group.js";
 import {
     SlashCommandConfig,
     SlashCommandLoader,
     SlashOptionsConfig,
-} from "@/slash/slash.js";
+} from "@/slash.js";
 import { MiddlewareFn } from "./middleware.js";
 
 export type CommandParams<TContextOut = unknown> = {
