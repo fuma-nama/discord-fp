@@ -15,6 +15,10 @@
             "cache": false,
             "persistent": true
         },
+        "dev:bot": {
+            "cache": false,
+            "persistent": true
+        },
         "clean": {
             "cache": false
         }
