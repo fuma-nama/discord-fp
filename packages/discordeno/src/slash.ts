@@ -14,6 +14,7 @@ import type {
     ApplicationCommandConfig,
     DescriptionConfig,
 } from "@/utils/types.js";
+import { MentionableOption } from "./index.js";
 
 export type SlashOptionsConfig = { [key: string]: Option<any> };
 
@@ -67,9 +68,9 @@ export class SlashCommandLoader implements FileLoader {
         const options: any = {};
 
         for (const [key, option] of this.optionMap) {
-            let data = raw?.find((v) => v.name === key);
+            const data = raw?.find((v) => v.name === key);
 
-            if (data != null) {
+            if (data != null && data.value != null) {
                 const resolved = e.data?.resolved!;
 
                 if (data.type === ApplicationCommandOptionTypes.User) {
@@ -77,7 +78,7 @@ export class SlashCommandLoader implements FileLoader {
 
                     data.value = {
                         user: resolved.users?.get(id),
-                        member: resolved.members?.get(id) ?? undefined,
+                        member: resolved.members?.get(id),
                     };
                 }
 
@@ -91,6 +92,27 @@ export class SlashCommandLoader implements FileLoader {
 
                 if (data.type === ApplicationCommandOptionTypes.Role) {
                     data.value = resolved.roles?.get(BigInt(data.value));
+                }
+
+                if (data.type === ApplicationCommandOptionTypes.Mentionable) {
+                    const id = BigInt(data.value);
+                    const role = resolved.roles?.get(id);
+
+                    if (role != null) {
+                        data.value = {
+                            type: "role",
+                            value: role,
+                        } as MentionableOption;
+                    } else {
+                        const user = resolved.users?.get(id);
+                        const member = resolved.members?.get(id);
+
+                        data.value = {
+                            type: "user",
+                            user,
+                            member,
+                        } as MentionableOption;
+                    }
                 }
             }
 

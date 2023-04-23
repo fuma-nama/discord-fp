@@ -40,6 +40,17 @@ export type UserOrMemberOption = {
     member?: Member;
 };
 
+export type MentionableOption =
+    | {
+          type: "user";
+          member?: Member;
+          user: User;
+      }
+    | {
+          type: "role";
+          value: Role;
+      };
+
 export type ChannelOptionConfig = BaseOptionConfig & {
     types?: ChannelTypes[];
 };
@@ -131,7 +142,7 @@ const options = {
             config
         );
     }),
-    mention: optionFactory<User | Role | Member | Channel, BaseOptionConfig>(
+    mention: optionFactory<MentionableOption, BaseOptionConfig>(
         (config, name) => {
             return createBuilder(
                 ApplicationCommandOptionTypes.Mentionable,
