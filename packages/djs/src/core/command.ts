@@ -71,7 +71,7 @@ export interface CommandBuilder<Params extends CommandParams> {
         _ctx: $Context;
     }>;
 
-    slash<Options extends SlashOptionsConfig>(
+    slash<Options extends SlashOptionsConfig = {}>(
         config: SlashCommandConfig<Options, Params["_ctx"]>
     ): SlashCommandLoader;
     user(config: UserMenuCommandConfig<Params["_ctx"]>): MenuCommandLoader;
