@@ -11,7 +11,7 @@ export type UserOptionConfig<Required extends boolean> =
     BaseOptionConfig<Required>;
 
 export type ParsedUserValue = {
-    user: User;
+    value: User;
     member?: GuildMember | APIInteractionDataResolvedGuildMember;
 };
 
@@ -27,7 +27,7 @@ export function user<Required extends boolean = true>(
             if (value == null || value.user == null) return null;
 
             return {
-                user: value.user,
+                value: value.user,
                 member: value.member ?? undefined,
             };
         },

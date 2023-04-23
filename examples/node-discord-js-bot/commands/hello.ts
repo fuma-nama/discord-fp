@@ -11,6 +11,9 @@ export default command.slash({
             .transform((v) => {
                 return `Mr.${v}`;
             }),
+        user: options.user({
+            description: "User",
+        }),
     },
     execute: async ({ event, options }) => {
         await event.reply(`Hello! ${options.name}`);

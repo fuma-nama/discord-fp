@@ -14,7 +14,7 @@ import type {
     ApplicationCommandConfig,
     DescriptionConfig,
 } from "@/utils/types.js";
-import { MentionableOption } from "./index.js";
+import { MentionableOptionValue, UserOptionValue } from "./index.js";
 
 export type SlashOptionsConfig = { [key: string]: Option<any> };
 
@@ -70,53 +70,9 @@ export class SlashCommandLoader implements FileLoader {
         for (const [key, option] of this.optionMap) {
             const data = raw?.find((v) => v.name === key);
 
-            if (data != null && data.value != null) {
-                const resolved = e.data?.resolved!;
-
-                if (data.type === ApplicationCommandOptionTypes.User) {
-                    const id = BigInt(data.value);
-
-                    data.value = {
-                        user: resolved.users?.get(id),
-                        member: resolved.members?.get(id),
-                    };
-                }
-
-                if (data.type === ApplicationCommandOptionTypes.Attachment) {
-                    data.value = resolved.attachments?.get(BigInt(data.value));
-                }
-
-                if (data.type === ApplicationCommandOptionTypes.Channel) {
-                    data.value = resolved.channels?.get(BigInt(data.value));
-                }
-
-                if (data.type === ApplicationCommandOptionTypes.Role) {
-                    data.value = resolved.roles?.get(BigInt(data.value));
-                }
-
-                if (data.type === ApplicationCommandOptionTypes.Mentionable) {
-                    const id = BigInt(data.value);
-                    const role = resolved.roles?.get(id);
-
-                    if (role != null) {
-                        data.value = {
-                            type: "role",
-                            value: role,
-                        } as MentionableOption;
-                    } else {
-                        const user = resolved.users?.get(id);
-                        const member = resolved.members?.get(id);
-
-                        data.value = {
-                            type: "user",
-                            user,
-                            member,
-                        } as MentionableOption;
-                    }
-                }
-            }
-
-            options[key] = option.parse(data?.value ?? null);
+            options[key] = option.parse(
+                data != null ? parseOptionValue(data, e) : null
+            );
         }
 
         executeWithMiddleware(e, this.middlewares, (e) => {
@@ -155,11 +111,12 @@ export class SlashCommandLoader implements FileLoader {
     }
 }
 
-function getRawOptions(e: Interaction): {
+type RawOption = {
     name: string;
     value?: any;
     type: ApplicationCommandOptionTypes;
-}[] {
+};
+function getRawOptions(e: Interaction): RawOption[] {
     const first = e.data?.options?.[0];
 
     if (first == null) {
@@ -173,4 +130,56 @@ function getRawOptions(e: Interaction): {
     }
 
     return e.data?.options ?? [];
+}
+
+function parseOptionValue(data: RawOption, interation: Interaction): any {
+    const resolved = interation.data?.resolved;
+
+    if (resolved == null || data.value == null) {
+        return null;
+    }
+
+    if (data.type === ApplicationCommandOptionTypes.User) {
+        const id = BigInt(data.value);
+
+        return {
+            value: resolved.users?.get(id),
+            member: resolved.members?.get(id),
+        } as UserOptionValue;
+    }
+
+    if (data.type === ApplicationCommandOptionTypes.Attachment) {
+        return resolved.attachments?.get(BigInt(data.value));
+    }
+
+    if (data.type === ApplicationCommandOptionTypes.Channel) {
+        return resolved.channels?.get(BigInt(data.value));
+    }
+
+    if (data.type === ApplicationCommandOptionTypes.Role) {
+        return resolved.roles?.get(BigInt(data.value));
+    }
+
+    if (data.type === ApplicationCommandOptionTypes.Mentionable) {
+        const id = BigInt(data.value);
+        const role = resolved.roles?.get(id);
+
+        if (role != null) {
+            return {
+                type: "role",
+                value: role,
+            } as MentionableOptionValue;
+        } else {
+            const user = resolved.users?.get(id);
+            const member = resolved.members?.get(id);
+
+            return {
+                type: "user",
+                user,
+                member,
+            } as MentionableOptionValue;
+        }
+    }
+
+    return data.value;
 }

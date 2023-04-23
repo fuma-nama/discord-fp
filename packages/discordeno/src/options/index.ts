@@ -35,12 +35,12 @@ export type AttachmentOptionConfig = BaseOptionConfig;
 export type BooleanOptionConfig = BaseOptionConfig;
 export type UserOptionConfig = BaseOptionConfig;
 
-export type UserOrMemberOption = {
-    user: User;
+export type UserOptionValue = {
+    value: User;
     member?: Member;
 };
 
-export type MentionableOption =
+export type MentionableOptionValue =
     | {
           type: "user";
           member?: Member;
@@ -78,15 +78,9 @@ const options = {
     role: optionFactory<Role, BaseOptionConfig>((config, name) => {
         return createBuilder(ApplicationCommandOptionTypes.Role, name, config);
     }),
-    user: optionFactory<UserOrMemberOption, UserOptionConfig>(
-        (config, name) => {
-            return createBuilder(
-                ApplicationCommandOptionTypes.User,
-                name,
-                config
-            );
-        }
-    ),
+    user: optionFactory<UserOptionValue, UserOptionConfig>((config, name) => {
+        return createBuilder(ApplicationCommandOptionTypes.User, name, config);
+    }),
     int: optionFactory<number, NumberOptionConfig>(
         (config, name, command, context) => {
             return createNumberBuilder(
@@ -142,7 +136,7 @@ const options = {
             config
         );
     }),
-    mention: optionFactory<MentionableOption, BaseOptionConfig>(
+    mention: optionFactory<MentionableOptionValue, BaseOptionConfig>(
         (config, name) => {
             return createBuilder(
                 ApplicationCommandOptionTypes.Mentionable,
