@@ -1,20 +1,19 @@
 {
-    "name": "djs-bot",
+    "name": "discordeno-bot",
     "version": "1.0.0",
     "private": true,
     "description": "Example discord bot with Typescript + esm",
-    "main": "index.ts",
     "type": "module",
     "scripts": {
-        "dev": "tsx watch ./index.ts",
+        "dev:bot": "tsx watch --clear-screen=false ./index.ts",
         "test": "echo \"Error: no test specified\" && exit 1"
     },
     "keywords": [],
     "author": "SonMooSans",
     "license": "MIT",
     "dependencies": {
-        "@discord-fp/djs": "workspace:*",
-        "discord.js": "^14.9.0",
+        "@discord-fp/discordeno": "workspace:*",
+        "discordeno": "^18.0.1",
         "dotenv": "^16.0.3"
     },
     "devDependencies": {
