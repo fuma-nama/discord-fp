@@ -1,5 +1,11 @@
 # @discord-fp/djs
 
+## 4.1.0
+
+### Minor Changes
+
+- b1b4a2b: Change `initDiscordFP` parameters, use `start({ client })` to pass bot client instead
+
 ## 4.0.0
 
 ### Major Changes
