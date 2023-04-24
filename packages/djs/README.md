@@ -239,22 +239,3 @@ options.string({
 }),
 //Transform "Henry" -> "Mr.Henry"
 ```
-
-## ESM Usage
-
-ESM has been supported since v0.2.1
-
-> **Note** <br />
-> If you have any problems with relative path, you may pass an absolute path instead
-
-### Common js
-
-```ts
-const { ... } = require("@discord-fp/djs");
-```
-
-### ESM
-
-```ts
-import { ... } from "@discord-fp/djs";
-```
