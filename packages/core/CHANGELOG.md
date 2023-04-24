@@ -1,5 +1,11 @@
 # @discord-fp/core
 
+## 4.0.1
+
+### Patch Changes
+
+- 71f8a94: Fix middleware context type discriminant
+
 ## 4.0.0
 
 ### Major Changes
