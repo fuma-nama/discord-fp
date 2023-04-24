@@ -10,7 +10,7 @@
         "clean": "turbo run clean",
         "test": "turbo test",
         "changeset": "changeset",
-        "version-packages": "changeset version",
+        "version": "changeset version",
         "release": "turbo run build && changeset publish"
     },
     "devDependencies": {
