@@ -8,6 +8,14 @@ export default command.slash({
         name: options
             .string({
                 description: "Your name",
+                autoComplete(e) {
+                    sendInteractionResponse(bot, e.id, e.token, {
+                        type: InteractionResponseTypes.ApplicationCommandAutocompleteResult,
+                        data: {
+                            choices: [{ name: "Mom", value: "Dad" }],
+                        },
+                    });
+                },
             })
             .transform((v) => {
                 return `Mr.${v}`;
