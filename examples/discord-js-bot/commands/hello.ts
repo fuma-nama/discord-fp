@@ -1,4 +1,4 @@
-import { command } from "@/utils/dfp.js";
+import { command } from "@/index.js";
 import { options } from "@discord-fp/djs";
 
 export default command.slash({

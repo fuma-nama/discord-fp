@@ -2,8 +2,11 @@ import { readNode, Node, loadNode } from "@discord-fp/core";
 import { resolve } from "path";
 import { LoadContext } from "../utils/loader.js";
 import { registerCommands, RegisterConfig } from "./register.js";
+import { Client } from "discord.js";
 
 export type StartOptions = {
+    client: Client;
+
     /**
      * Where to load commands (path or node, relative path is allowed)
      */
@@ -44,10 +47,10 @@ export async function start(
         loaded.push(await load(target, context));
     }
 
-    await registerCommands(options.register, context);
+    await registerCommands(options.client, options.register, context.commands);
 
     console.log("Loading event listeners...");
-    context.listeners.load(context.client);
+    context.listeners.load(options.client);
 
     console.timeEnd(ready);
     return {
