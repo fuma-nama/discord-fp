@@ -1,6 +1,6 @@
-import { readNode, Node } from "@/shared/reader.js";
+import { readNode, Node, loadNode } from "@discord-fp/core";
 import { resolve } from "path";
-import { LoadContext, loadNode } from "../shared/loader.js";
+import { LoadContext } from "../utils/loader.js";
 import { registerCommands, RegisterConfig } from "./register.js";
 
 export type StartOptions = {

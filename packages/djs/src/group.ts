@@ -1,15 +1,13 @@
-import { ApplicationCommandConfig, DescriptionConfig } from "@/shared/types.js";
+import { ApplicationCommandConfig, DescriptionConfig } from "@/utils/types.js";
 import { SlashCommandSubcommandGroupBuilder } from "discord.js";
-import { debugNode } from "@/internal/log.js";
-import { GroupLoader, LoadContext } from "@/shared/loader.js";
-import { Node, Group } from "@/shared/reader.js";
-import { createSlashBuilder, createBaseBuilder } from "@/internal/builder.js";
+import { FPGroupLoader, LoadContext } from "@/utils/loader.js";
+import { createSlashBuilder, createBaseBuilder } from "@/utils/builder.js";
 import { SlashCommandLoader } from "./slash.js";
+import { Node, Group } from "@discord-fp/core";
 
 export type SlashGroupConfig = ApplicationCommandConfig & DescriptionConfig;
 
-export class SlashCommandGroupLoader implements GroupLoader {
-    readonly type = "group";
+export class SlashCommandGroupLoader implements FPGroupLoader {
     readonly config: SlashGroupConfig;
 
     constructor(config: SlashGroupConfig) {
@@ -96,4 +94,8 @@ export class SlashCommandGroupLoader implements GroupLoader {
 
 function errorInvalidFile(node: Node) {
     throw new Error(`Invalid file ${node.path} (${node.type})`);
+}
+
+function debugNode(node: Node, message: string) {
+    console.debug(`${node.path} (${node.type})`, message);
 }

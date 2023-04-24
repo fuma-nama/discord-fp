@@ -1,4 +1,4 @@
-import type { Interaction, LocalizationMap } from "discord.js";
+import type { LocalizationMap } from "discord.js";
 
 export type ApplicationCommandConfig = {
     name?: string;
@@ -27,7 +27,7 @@ export type DescriptionConfig = {
     descriptions?: LocalizationMap;
 };
 
-export type Event<E extends Interaction, Context> = {
+export type EventWithContext<E, Context> = {
     event: E;
     ctx: Context;
 };

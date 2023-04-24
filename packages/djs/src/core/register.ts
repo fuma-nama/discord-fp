@@ -1,4 +1,4 @@
-import { LoadContext } from "../shared/loader.js";
+import { LoadContext } from "../utils/loader.js";
 
 export type RegisterConfig = {
     /**

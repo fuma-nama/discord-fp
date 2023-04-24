@@ -1,19 +1,24 @@
-import { Event } from "@/shared/types.js";
-import { executeWithMiddleware, MiddlewareFn } from "@/core/middleware.js";
-import { FileLoader, LoadContext } from "@/shared/loader.js";
-import { SlashCommandKey } from "@/listener/keys.js";
-import { createSlashBuilder, createBaseBuilder } from "@/internal/builder.js";
+import { EventWithContext } from "@/utils/types.js";
+import { FPFileLoader, LoadContext } from "@/utils/loader.js";
+import { createSlashBuilder, createBaseBuilder } from "@/utils/builder.js";
 import {
     ChatInputCommandInteraction,
     SharedSlashCommandOptions,
     SlashCommandSubcommandBuilder,
 } from "discord.js";
-import type { File } from "@/shared/reader.js";
-import type { InferOptionType, Option } from "./options/base.js";
+import type { Option } from "./options/index.js";
 import type {
     ApplicationCommandConfig,
     DescriptionConfig,
-} from "@/shared/types.js";
+} from "@/utils/types.js";
+import {
+    File,
+    InferOptionType,
+    MiddlewareFn,
+    executeWithMiddleware,
+} from "@discord-fp/core";
+import { parseOptionValue } from "./options/parser.js";
+import { SlashCommandKey } from "./listener/keys.js";
 
 export type SlashOptionsConfig = { [key: string]: Option<any> };
 
@@ -31,7 +36,7 @@ export type SlashCommandConfig<
 export type SlashCommandInteractionContext<
     O extends SlashOptionsConfig,
     $Context
-> = Event<ChatInputCommandInteraction, $Context> & {
+> = EventWithContext<ChatInputCommandInteraction, $Context> & {
     options: {
         [K in keyof O]: InferOptionType<O[K]>;
     };
@@ -52,8 +57,7 @@ function loadOptions(
     }
 }
 
-export class SlashCommandLoader implements FileLoader {
-    readonly type = "file";
+export class SlashCommandLoader implements FPFileLoader {
     readonly config: SlashCommandConfig<SlashOptionsConfig, unknown>;
     readonly optionMap: [string, Option<unknown>][];
     middlewares: MiddlewareFn<any, any>[] = [];
@@ -69,9 +73,11 @@ export class SlashCommandLoader implements FileLoader {
         const options: any = {};
 
         for (const [key, option] of this.optionMap) {
-            const v = e.options.get(key, option.config.required);
+            const data = e.options.get(key, false);
 
-            options[key] = option.parse(v);
+            options[key] = option.parse(
+                data != null ? parseOptionValue(data) : null
+            );
         }
 
         executeWithMiddleware(e, this.middlewares, (e) => {
