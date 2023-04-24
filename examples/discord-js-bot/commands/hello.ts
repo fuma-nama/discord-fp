@@ -16,6 +16,7 @@ export default command.slash({
         }),
     },
     execute: async ({ event, options }) => {
+        console.log(options.user);
         await event.reply(`Hello! ${options.name}`);
     },
 });
