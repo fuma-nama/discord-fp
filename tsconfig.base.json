@@ -1,0 +1,16 @@
+{
+    "$schema": "https://json.schemastore.org/tsconfig",
+    "display": "Default",
+    "compilerOptions": {
+        "composite": true,
+        "outDir": "dist",
+        "esModuleInterop": true,
+        "module": "es2020",
+        "moduleResolution": "nodenext",
+        "target": "ES2022",
+        "strict": true,
+        "strictNullChecks": true,
+        "noImplicitThis": true
+    },
+    "exclude": ["node_modules"]
+}

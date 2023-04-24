@@ -1,0 +1,32 @@
+{
+    "name": "@discord-fp/core",
+    "version": "4.0.0",
+    "type": "module",
+    "main": "dist/index.cjs",
+    "module": "./dist/index.js",
+    "types": "./dist/index.d.ts",
+    "exports": {
+        ".": {
+            "require": "./dist/index.cjs",
+            "import": "./dist/index.js",
+            "types": "./dist/index.d.ts"
+        }
+    },
+    "scripts": {
+        "build": "tsup src/index.ts --dts --clean --format esm,cjs",
+        "dev": "tsup src/index.ts --dts --clean --format esm,cjs --watch",
+        "test": "echo \"No test specified\""
+    },
+    "files": [
+        "./dist"
+    ],
+    "author": "Money SonMooSans",
+    "repository": "github:SonMooSans/discord-fp",
+    "license": "MIT",
+    "publishConfig": {
+        "access": "public"
+    },
+    "devDependencies": {
+        "@types/node": "^18.16.0"
+    }
+}

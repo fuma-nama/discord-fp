@@ -1,0 +1,21 @@
+{
+    "name": "discord-js-bot",
+    "private": true,
+    "description": "Example discord bot with Typescript + esm",
+    "type": "module",
+    "scripts": {
+        "dev:bot": "tsx watch --clear-screen=false ./index.ts",
+        "test": "echo \"Error: no test specified\" && exit 1"
+    },
+    "keywords": [],
+    "author": "SonMooSans",
+    "license": "MIT",
+    "dependencies": {
+        "@discord-fp/djs": "workspace:*",
+        "discord.js": "^14.9.0",
+        "dotenv": "^16.0.3"
+    },
+    "devDependencies": {
+        "tsx": "^3.12.2"
+    }
+}

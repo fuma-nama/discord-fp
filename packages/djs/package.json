@@ -1,0 +1,47 @@
+{
+    "name": "@discord-fp/djs",
+    "version": "4.0.0",
+    "description": "A Beautiful Application Command Framework based on Discord.js",
+    "type": "module",
+    "main": "dist/index.cjs",
+    "module": "./dist/index.js",
+    "types": "./dist/index.d.ts",
+    "exports": {
+        ".": {
+            "require": "./dist/index.cjs",
+            "import": "./dist/index.js",
+            "types": "./dist/index.d.ts"
+        }
+    },
+    "scripts": {
+        "build": "tsup src/index.ts --dts --clean --format esm,cjs",
+        "dev": "tsup src/index.ts --dts --clean --format esm,cjs --watch",
+        "test": "echo \"No test specified\""
+    },
+    "keywords": [
+        "discord.js",
+        "slash command",
+        "application command"
+    ],
+    "files": [
+        "./dist"
+    ],
+    "author": "Money SonMooSans",
+    "repository": "github:SonMooSans/discord-fp",
+    "license": "MIT",
+    "devDependencies": {
+        "@types/hashmap": "^2.3.1",
+        "@types/node": "^18.11.18",
+        "discord.js": "^14.9.0"
+    },
+    "dependencies": {
+        "hashmap": "^2.4.0",
+        "@discord-fp/core": "workspace:*"
+    },
+    "peerDependencies": {
+        "discord.js": "14.x"
+    },
+    "publishConfig": {
+        "access": "public"
+    }
+}
