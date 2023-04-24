@@ -57,13 +57,13 @@ importers:
 
   packages/discordeno:
     dependencies:
+      '@discord-fp/core':
+        specifier: workspace:*
+        version: link:../core
       hashmap:
         specifier: ^2.4.0
         version: 2.4.0
     devDependencies:
-      '@discord-fp/core':
-        specifier: workspace:*
-        version: link:../core
       '@types/hashmap':
         specifier: ^2.3.1
         version: 2.3.1
@@ -76,6 +76,9 @@ importers:
 
   packages/djs:
     dependencies:
+      '@discord-fp/core':
+        specifier: workspace:*
+        version: link:../core
       hashmap:
         specifier: ^2.4.0
         version: 2.4.0

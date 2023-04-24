@@ -32,15 +32,14 @@
     "devDependencies": {
         "@types/hashmap": "^2.3.1",
         "@types/node": "^18.11.18",
-        "discordeno": "^18.0.1",
-        "@discord-fp/core": "workspace:*"
+        "discordeno": "^18.0.1"
     },
     "dependencies": {
-        "hashmap": "^2.4.0"
+        "hashmap": "^2.4.0",
+        "@discord-fp/core": "workspace:*"
     },
     "peerDependencies": {
-        "discordeno": "18.x",
-        "@discord-fp/core": "workspace:*"
+        "discordeno": "18.x"
     },
     "publishConfig": {
         "access": "public"

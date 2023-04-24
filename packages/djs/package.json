@@ -35,7 +35,8 @@
         "discord.js": "^14.9.0"
     },
     "dependencies": {
-        "hashmap": "^2.4.0"
+        "hashmap": "^2.4.0",
+        "@discord-fp/core": "workspace:*"
     },
     "peerDependencies": {
         "discord.js": "14.x"
