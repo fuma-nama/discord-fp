@@ -17,7 +17,7 @@ importers:
         specifier: ^4.9.4
         version: 4.9.4
 
-  examples/node-discord-js-bot:
+  examples/discord-js-bot:
     dependencies:
       '@discord-fp/djs':
         specifier: workspace:*
@@ -33,7 +33,7 @@ importers:
         specifier: ^3.12.2
         version: 3.12.2
 
-  examples/node-discordeno-bot:
+  examples/discordeno-bot:
     dependencies:
       '@discord-fp/discordeno':
         specifier: workspace:*

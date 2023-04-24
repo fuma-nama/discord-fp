@@ -1,6 +1,5 @@
 {
     "name": "discordeno-bot",
-    "version": "1.0.0",
     "private": true,
     "description": "Example discord bot with Typescript + esm",
     "type": "module",

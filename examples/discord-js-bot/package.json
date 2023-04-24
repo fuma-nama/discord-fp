@@ -1,6 +1,5 @@
 {
-    "name": "djs-bot",
-    "version": "1.0.0",
+    "name": "discord-js-bot",
     "private": true,
     "description": "Example discord bot with Typescript + esm",
     "type": "module",
