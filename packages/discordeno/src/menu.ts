@@ -49,7 +49,7 @@ export function createMenuCommandLoader<E extends MenuInteraction, Context>({
 }
 
 export interface MenuCommandLoader extends FPFileLoader {
-    middlewares: MiddlewareFn<any, any>[];
+    middlewares: MiddlewareFn<any, any, any>[];
 }
 
 export type MessageMenuCommandConfig<Context> = ContextCommandConfig<

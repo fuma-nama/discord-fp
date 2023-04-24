@@ -12,21 +12,22 @@ import {
     SlashOptionRecord,
 } from "@/slash.js";
 import { MiddlewareFn } from "@discord-fp/core";
+import { Interaction } from "discordeno";
+
+type AnyMiddlewareFn = MiddlewareFn<Interaction, unknown, unknown>;
 
 export type CommandParams<TContextOut = unknown> = {
     _ctx: TContextOut;
 };
 
 function makeBuilder<Params extends CommandParams>(def: {
-    middlewares: MiddlewareFn<any, any>[];
+    middlewares: AnyMiddlewareFn[];
 }): CommandBuilder<Params> {
     const { middlewares } = def;
 
     return {
-        middleware<$Context = {}>(fn: MiddlewareFn<Params["_ctx"], $Context>) {
-            return makeBuilder<{
-                _ctx: $Context;
-            }>({ middlewares: [...middlewares, fn] });
+        middleware(fn) {
+            return makeBuilder({ middlewares: [...middlewares, fn] });
         },
         slash(config) {
             const loader = new SlashCommandLoader(
@@ -64,7 +65,7 @@ export function initCommandBuilder(): CommandBuilder<{ _ctx: {} }> {
 
 export interface CommandBuilder<Params extends CommandParams> {
     middleware<$Context = {}>(
-        fn: MiddlewareFn<Params["_ctx"], $Context>
+        fn: MiddlewareFn<Interaction, Params["_ctx"], $Context>
     ): CommandBuilder<{
         _ctx: $Context;
     }>;

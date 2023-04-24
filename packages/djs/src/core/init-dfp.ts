@@ -16,8 +16,8 @@ export interface Dfp<Params extends CommandParams> {
     listener: ListenerModule;
 }
 
-export function initDiscordFP() {
-    const dfp: Dfp<{ _ctx: {} }> = {
+export function initDiscordFP(): Dfp<{ _ctx: {} }> {
+    return {
         command: initCommandBuilder(),
         loaded: [],
         listener: new ListenerModule(),
@@ -34,6 +34,4 @@ export function initDiscordFP() {
             return result;
         },
     };
-
-    return dfp;
 }

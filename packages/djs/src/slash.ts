@@ -60,7 +60,7 @@ function loadOptions(
 export class SlashCommandLoader implements FPFileLoader {
     readonly config: SlashCommandConfig<SlashOptionsConfig, unknown>;
     readonly optionMap: [string, Option<unknown>][];
-    middlewares: MiddlewareFn<any, any>[] = [];
+    middlewares: MiddlewareFn<any, any, any>[] = [];
 
     constructor(config: SlashCommandConfig<SlashOptionsConfig, unknown>) {
         this.config = config;

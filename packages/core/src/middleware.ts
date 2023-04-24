@@ -8,7 +8,7 @@ type MiddlewareOutput<E, Context> = {
     ctx: Context;
 };
 
-export type MiddlewareFn<Event, Context> = {
+export type MiddlewareFn<Event, Context, ContextOut> = {
     (opts: {
         event: Event;
         ctx: Context;
@@ -18,12 +18,12 @@ export type MiddlewareFn<Event, Context> = {
                 e: MiddlewareInput<Event, $Context>
             ): Promise<MiddlewareOutput<Event, $Context> | void>;
         };
-    }): Promise<MiddlewareOutput<Event, Context> | void> | void;
+    }): Promise<MiddlewareOutput<Event, ContextOut> | void> | void;
 };
 
 export async function executeWithMiddleware<E>(
     event: E,
-    middlewares: MiddlewareFn<any, any>[],
+    middlewares: MiddlewareFn<E, any, any>[],
     callback: (e: MiddlewareInput<E, any>) => void | Promise<void>
 ) {
     const callRecursive = async (

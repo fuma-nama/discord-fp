@@ -60,7 +60,7 @@ export function createMenuCommandLoader<E, Context>({
         key: MenuCommandKey,
         callback: (e: E) => void
     ) => void;
-}): MenuCommandLoader {
+}): MenuCommandLoader<E> {
     return {
         middlewares: [],
         load({ name }: File, context: LoadContext): void | Promise<void> {
@@ -77,6 +77,6 @@ export function createMenuCommandLoader<E, Context>({
     };
 }
 
-export interface MenuCommandLoader extends FPFileLoader {
-    middlewares: MiddlewareFn<any, any>[];
+export interface MenuCommandLoader<E> extends FPFileLoader {
+    middlewares: MiddlewareFn<E, any, any>[];
 }

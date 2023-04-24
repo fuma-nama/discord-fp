@@ -1,9 +1,9 @@
 import {
-    MenuCommandLoader,
     createMessageMenuCommandLoader,
     MessageMenuCommandConfig,
     createUserMenuCommandLoader,
     UserMenuCommandConfig,
+    MenuCommandLoader,
 } from "@/menu.js";
 import { SlashCommandGroupLoader, SlashGroupConfig } from "@/group.js";
 import {
@@ -12,13 +12,18 @@ import {
     SlashOptionsConfig,
 } from "@/slash.js";
 import { MiddlewareFn } from "@discord-fp/core";
+import {
+    Interaction,
+    MessageContextMenuCommandInteraction,
+    UserContextMenuCommandInteraction,
+} from "discord.js";
 
 export type CommandParams<TContextOut = unknown> = {
     _ctx: TContextOut;
 };
 
 function makeBuilder<Params extends CommandParams>(def: {
-    middlewares: MiddlewareFn<any, any>[];
+    middlewares: MiddlewareFn<any, any, any>[];
 }): CommandBuilder<Params> {
     const { middlewares } = def;
 
@@ -62,7 +67,7 @@ export function initCommandBuilder(): CommandBuilder<{ _ctx: {} }> {
 
 export interface CommandBuilder<Params extends CommandParams> {
     middleware<$Context = {}>(
-        fn: MiddlewareFn<Params["_ctx"], $Context>
+        fn: MiddlewareFn<Interaction, Params["_ctx"], $Context>
     ): CommandBuilder<{
         _ctx: $Context;
     }>;
@@ -70,10 +75,12 @@ export interface CommandBuilder<Params extends CommandParams> {
     slash<Options extends SlashOptionsConfig = {}>(
         config: SlashCommandConfig<Options, Params["_ctx"]>
     ): SlashCommandLoader;
-    user(config: UserMenuCommandConfig<Params["_ctx"]>): MenuCommandLoader;
+    user(
+        config: UserMenuCommandConfig<Params["_ctx"]>
+    ): MenuCommandLoader<UserContextMenuCommandInteraction>;
     message(
         config: MessageMenuCommandConfig<Params["_ctx"]>
-    ): MenuCommandLoader;
+    ): MenuCommandLoader<MessageContextMenuCommandInteraction>;
 
     group(config: SlashGroupConfig): SlashCommandGroupLoader;
 }
