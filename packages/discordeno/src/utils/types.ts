@@ -1,5 +1,20 @@
+import { ListenerModule } from "@/index.js";
+import { CreateApplicationCommand } from "discordeno";
+import { FileLoader, GroupLoader } from "@discord-fp/core";
 import { Interaction } from "discordeno";
 import { Localization, PermissionStrings } from "discordeno/types";
+
+export type FPFileLoader = FileLoader<LoadContext>;
+
+export type FPGroupLoader = GroupLoader<LoadContext>;
+
+/**
+ * Used for loading command, You may extend this type
+ */
+export interface LoadContext {
+    listeners: ListenerModule;
+    commands: CreateApplicationCommand[];
+}
 
 export type ApplicationCommandConfig = {
     name?: string;

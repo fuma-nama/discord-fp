@@ -1,4 +1,4 @@
-import { SlashCommandKey, LoadContext } from "@/index.js";
+import { LoadContext } from "@/utils/types.js";
 import {
     AutoCompleteOptionConfig,
     BaseOptionConfig,
@@ -6,9 +6,10 @@ import {
     buildAutoComplete,
     buildChoices,
     createBuilder,
-    optionFactory,
-} from "./factory.js";
+    createNumberBuilder,
+} from "./builder.js";
 import {
+    ApplicationCommandOption,
     ApplicationCommandOptionTypes,
     Attachment,
     Channel,
@@ -17,6 +18,7 @@ import {
     Role,
     User,
 } from "discordeno";
+import { InferOption, optionFactory } from "@discord-fp/core";
 
 export type StringOptionConfig = BaseOptionConfig &
     ChoicesOptionConfig<string> &
@@ -55,8 +57,15 @@ export type ChannelOptionConfig = BaseOptionConfig & {
     types?: ChannelTypes[];
 };
 
-const options = {
-    string: optionFactory<string, StringOptionConfig>(
+type Global = {
+    context: LoadContext;
+    output: ApplicationCommandOption;
+};
+
+export type Option<T> = InferOption<T, Global>;
+
+export const options = {
+    string: optionFactory<string, StringOptionConfig, Global>(
         (config, name, command, context) => {
             const builder = createBuilder(
                 ApplicationCommandOptionTypes.String,
@@ -75,13 +84,19 @@ const options = {
             return builder;
         }
     ),
-    role: optionFactory<Role, BaseOptionConfig>((config, name) => {
+    role: optionFactory<Role, BaseOptionConfig, Global>((config, name) => {
         return createBuilder(ApplicationCommandOptionTypes.Role, name, config);
     }),
-    user: optionFactory<UserOptionValue, UserOptionConfig>((config, name) => {
-        return createBuilder(ApplicationCommandOptionTypes.User, name, config);
-    }),
-    int: optionFactory<number, NumberOptionConfig>(
+    user: optionFactory<UserOptionValue, UserOptionConfig, Global>(
+        (config, name) => {
+            return createBuilder(
+                ApplicationCommandOptionTypes.User,
+                name,
+                config
+            );
+        }
+    ),
+    int: optionFactory<number, NumberOptionConfig, Global>(
         (config, name, command, context) => {
             return createNumberBuilder(
                 ApplicationCommandOptionTypes.Integer,
@@ -94,7 +109,7 @@ const options = {
             );
         }
     ),
-    number: optionFactory<number, NumberOptionConfig>(
+    number: optionFactory<number, NumberOptionConfig, Global>(
         (config, name, command, context) => {
             return createNumberBuilder(
                 ApplicationCommandOptionTypes.Number,
@@ -107,20 +122,22 @@ const options = {
             );
         }
     ),
-    channel: optionFactory<Channel, ChannelOptionConfig>((config, name) => {
-        const builder = createBuilder(
-            ApplicationCommandOptionTypes.Channel,
-            name,
-            config
-        );
+    channel: optionFactory<Channel, ChannelOptionConfig, Global>(
+        (config, name) => {
+            const builder = createBuilder(
+                ApplicationCommandOptionTypes.Channel,
+                name,
+                config
+            );
 
-        if (config.types != null) {
-            builder.channelTypes = config.types;
+            if (config.types != null) {
+                builder.channelTypes = config.types;
+            }
+
+            return builder;
         }
-
-        return builder;
-    }),
-    attachment: optionFactory<Attachment, AttachmentOptionConfig>(
+    ),
+    attachment: optionFactory<Attachment, AttachmentOptionConfig, Global>(
         (config, name) => {
             return createBuilder(
                 ApplicationCommandOptionTypes.Attachment,
@@ -129,14 +146,16 @@ const options = {
             );
         }
     ),
-    boolean: optionFactory<boolean, BooleanOptionConfig>((config, name) => {
-        return createBuilder(
-            ApplicationCommandOptionTypes.Boolean,
-            name,
-            config
-        );
-    }),
-    mention: optionFactory<MentionableOptionValue, BaseOptionConfig>(
+    boolean: optionFactory<boolean, BooleanOptionConfig, Global>(
+        (config, name) => {
+            return createBuilder(
+                ApplicationCommandOptionTypes.Boolean,
+                name,
+                config
+            );
+        }
+    ),
+    mention: optionFactory<MentionableOptionValue, BaseOptionConfig, Global>(
         (config, name) => {
             return createBuilder(
                 ApplicationCommandOptionTypes.Mentionable,
@@ -146,28 +165,3 @@ const options = {
         }
     ),
 };
-
-function createNumberBuilder(
-    type: ApplicationCommandOptionTypes,
-    config: NumberOptionConfig,
-    {
-        name,
-        command,
-        context,
-    }: {
-        name: string;
-        command: SlashCommandKey;
-        context: LoadContext;
-    }
-) {
-    const builder = createBuilder(type, name, config);
-    builder.choices = buildChoices(config);
-    builder.autocomplete = buildAutoComplete([command, name], config, context);
-
-    if (config.min != null) builder.minValue = config.min;
-    if (config.max != null) builder.maxValue = config.max;
-
-    return builder;
-}
-
-export { options, optionFactory };

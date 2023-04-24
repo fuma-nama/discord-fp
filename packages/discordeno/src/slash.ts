@@ -1,25 +1,30 @@
-import { Event } from "@/utils/types.js";
-import { executeWithMiddleware, MiddlewareFn } from "@/core/middleware.js";
 import { SlashCommandKey } from "@/listener/keys.js";
 import { createSlashBuilder } from "@/utils/builder.js";
+import { Option } from "./options/index.js";
 import {
     Interaction,
     ApplicationCommandOption,
     ApplicationCommandOptionTypes,
 } from "discordeno";
-import type { FileLoader, LoadContext } from "@/utils/loader.js";
-import type { File } from "@/utils/reader.js";
-import type { InferOptionType, Option } from "./options/factory.js";
 import type {
     ApplicationCommandConfig,
     DescriptionConfig,
+    Event,
+    FPFileLoader,
+    LoadContext,
 } from "@/utils/types.js";
-import { MentionableOptionValue, UserOptionValue } from "./index.js";
+import {
+    MiddlewareFn,
+    executeWithMiddleware,
+    File,
+    InferOptionType,
+} from "@discord-fp/core";
+import { getRawOptions, parseOptionValue } from "./options/parser.js";
 
-export type SlashOptionsConfig = { [key: string]: Option<any> };
+export type SlashOptionRecord = Record<string, Option<unknown>>;
 
 export type SlashCommandConfig<
-    O extends SlashOptionsConfig,
+    O extends SlashOptionRecord,
     $Context
 > = DescriptionConfig &
     ApplicationCommandConfig & {
@@ -30,7 +35,7 @@ export type SlashCommandConfig<
     };
 
 export type SlashCommandInteractionContext<
-    O extends SlashOptionsConfig,
+    O extends SlashOptionRecord,
     $Context
 > = Event<Interaction, $Context> & {
     options: {
@@ -39,7 +44,7 @@ export type SlashCommandInteractionContext<
 };
 
 function loadOptions(
-    config: SlashCommandConfig<SlashOptionsConfig, unknown>,
+    config: SlashCommandConfig<SlashOptionRecord, unknown>,
     context: LoadContext,
     key: SlashCommandKey
 ): ApplicationCommandOption[] {
@@ -50,13 +55,12 @@ function loadOptions(
     });
 }
 
-export class SlashCommandLoader implements FileLoader {
-    readonly type = "file";
-    readonly config: SlashCommandConfig<SlashOptionsConfig, unknown>;
+export class SlashCommandLoader implements FPFileLoader {
+    readonly config: SlashCommandConfig<SlashOptionRecord, unknown>;
     readonly optionMap: [string, Option<unknown>][];
     middlewares: MiddlewareFn<any, any>[] = [];
 
-    constructor(config: SlashCommandConfig<SlashOptionsConfig, unknown>) {
+    constructor(config: SlashCommandConfig<SlashOptionRecord, unknown>) {
         this.config = config;
         this.optionMap = Object.entries<Option<unknown>>(
             this.config.options ?? {}
@@ -109,77 +113,4 @@ export class SlashCommandLoader implements FileLoader {
         context.listeners.slash.set(key, this.onEvent);
         return command;
     }
-}
-
-type RawOption = {
-    name: string;
-    value?: any;
-    type: ApplicationCommandOptionTypes;
-};
-function getRawOptions(e: Interaction): RawOption[] {
-    const first = e.data?.options?.[0];
-
-    if (first == null) {
-        return [];
-    }
-    if (first.type === ApplicationCommandOptionTypes.SubCommandGroup) {
-        return first.options?.[0].options ?? [];
-    }
-    if (first.type === ApplicationCommandOptionTypes.SubCommand) {
-        return first.options ?? [];
-    }
-
-    return e.data?.options ?? [];
-}
-
-function parseOptionValue(data: RawOption, interation: Interaction): any {
-    const resolved = interation.data?.resolved;
-
-    if (resolved == null || data.value == null) {
-        return null;
-    }
-
-    if (data.type === ApplicationCommandOptionTypes.User) {
-        const id = BigInt(data.value);
-
-        return {
-            value: resolved.users?.get(id),
-            member: resolved.members?.get(id),
-        } as UserOptionValue;
-    }
-
-    if (data.type === ApplicationCommandOptionTypes.Attachment) {
-        return resolved.attachments?.get(BigInt(data.value));
-    }
-
-    if (data.type === ApplicationCommandOptionTypes.Channel) {
-        return resolved.channels?.get(BigInt(data.value));
-    }
-
-    if (data.type === ApplicationCommandOptionTypes.Role) {
-        return resolved.roles?.get(BigInt(data.value));
-    }
-
-    if (data.type === ApplicationCommandOptionTypes.Mentionable) {
-        const id = BigInt(data.value);
-        const role = resolved.roles?.get(id);
-
-        if (role != null) {
-            return {
-                type: "role",
-                value: role,
-            } as MentionableOptionValue;
-        } else {
-            const user = resolved.users?.get(id);
-            const member = resolved.members?.get(id);
-
-            return {
-                type: "user",
-                user,
-                member,
-            } as MentionableOptionValue;
-        }
-    }
-
-    return data.value;
 }

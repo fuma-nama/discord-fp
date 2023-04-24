@@ -1,4 +1,4 @@
-import { LoadContext } from "@/utils/loader.js";
+import { LoadContext } from "@/utils/types.js";
 import { AutoCompleteKey, SlashCommandKey } from "@/listener/keys.js";
 import {
     ApplicationCommandOption,
@@ -7,54 +7,7 @@ import {
     Localization,
 } from "discordeno";
 import { AutocompleteInteraction } from "@/utils/types.js";
-
-export type InferOptionType<T> = T extends Option<infer P> ? P : never;
-
-export type Option<T> = {
-    readonly config: BaseOptionConfig;
-    build(
-        name: string,
-        command: SlashCommandKey,
-        context: LoadContext
-    ): ApplicationCommandOption;
-    parse(value: unknown): T;
-    transform<R>(fn: (v: T) => R): Option<R>;
-};
-
-export function optionFactory<T, Config extends BaseOptionConfig>(
-    build: (
-        config: Config,
-        name: string,
-        command: SlashCommandKey,
-        context: LoadContext
-    ) => ApplicationCommandOption
-): {
-    <Required extends boolean = true>(
-        config: Omit<Config, "required"> & { required?: Required }
-    ): Option<Required extends true ? T : T | null>;
-} {
-    return (config) => {
-        return {
-            config,
-            build: (...args) => build(config as Config, ...args),
-            parse(value) {
-                return value as T;
-            },
-            transform(fn) {
-                const parse = this.parse;
-
-                return {
-                    ...(this as Option<any>),
-                    parse(value) {
-                        const parsed = parse(value);
-
-                        return fn(parsed as any);
-                    },
-                };
-            },
-        };
-    };
-}
+import { NumberOptionConfig } from "./index.js";
 
 export type BaseOptionConfig = {
     description: string;
@@ -121,4 +74,27 @@ export function buildAutoComplete(
     }
 
     return true;
+}
+
+export function createNumberBuilder(
+    type: ApplicationCommandOptionTypes,
+    config: NumberOptionConfig,
+    {
+        name,
+        command,
+        context,
+    }: {
+        name: string;
+        command: SlashCommandKey;
+        context: LoadContext;
+    }
+) {
+    const builder = createBuilder(type, name, config);
+    builder.choices = buildChoices(config);
+    builder.autocomplete = buildAutoComplete([command, name], config, context);
+
+    if (config.min != null) builder.minValue = config.min;
+    if (config.max != null) builder.maxValue = config.max;
+
+    return builder;
 }

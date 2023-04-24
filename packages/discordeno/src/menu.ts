@@ -1,11 +1,14 @@
-import { File } from "./utils/reader.js";
-import { executeWithMiddleware, MiddlewareFn } from "@/core/middleware.js";
 import { MenuCommandKey } from "@/listener/keys.js";
 import { ListenerModule } from "@/listener/module.js";
-import { FileLoader, LoadContext } from "./utils/loader.js";
-import { ApplicationCommandConfig, Event } from "./utils/types.js";
+import {
+    ApplicationCommandConfig,
+    Event,
+    FPFileLoader,
+    LoadContext,
+} from "./utils/types.js";
 import { createContextBuilder } from "./utils/builder.js";
 import { ApplicationCommandTypes, Interaction } from "discordeno";
+import { File, executeWithMiddleware, MiddlewareFn } from "@discord-fp/core";
 
 export type MenuInteraction = Interaction;
 
@@ -30,7 +33,6 @@ export function createMenuCommandLoader<E extends MenuInteraction, Context>({
     ) => void;
 }): MenuCommandLoader {
     return {
-        type: "file",
         middlewares: [],
         load({ name }: File, context: LoadContext): void | Promise<void> {
             const builder = createContextBuilder(name, config, type);
@@ -46,12 +48,17 @@ export function createMenuCommandLoader<E extends MenuInteraction, Context>({
     };
 }
 
-export interface MenuCommandLoader extends FileLoader {
+export interface MenuCommandLoader extends FPFileLoader {
     middlewares: MiddlewareFn<any, any>[];
 }
 
 export type MessageMenuCommandConfig<Context> = ContextCommandConfig<
     MenuInteraction,
+    Context
+>;
+
+export type UserMenuCommandConfig<Context> = ContextCommandConfig<
+    Interaction,
     Context
 >;
 
@@ -66,11 +73,6 @@ export function createMessageMenuCommandLoader(
         },
     });
 }
-
-export type UserMenuCommandConfig<Context> = ContextCommandConfig<
-    Interaction,
-    Context
->;
 
 export function createUserMenuCommandLoader(
     config: UserMenuCommandConfig<any>

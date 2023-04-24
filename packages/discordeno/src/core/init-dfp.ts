@@ -1,11 +1,11 @@
 import { start, StartOptions, StartResult } from "@/core/start.js";
 import { ListenerModule } from "@/listener/module.js";
-import type { Node } from "@/utils/reader.js";
 import {
     CommandBuilder,
     CommandParams,
     initCommandBuilder,
 } from "./command.js";
+import { Node } from "@discord-fp/core";
 
 export interface Dfp<Params extends CommandParams> {
     command: CommandBuilder<Params>;

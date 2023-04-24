@@ -1,17 +1,20 @@
-import { Node, Group } from "@/utils/reader.js";
-import { GroupLoader, LoadContext } from "@/utils/loader.js";
-import { ApplicationCommandConfig, DescriptionConfig } from "@/utils/types.js";
+import {
+    ApplicationCommandConfig,
+    DescriptionConfig,
+    FPGroupLoader,
+    LoadContext,
+} from "@/utils/types.js";
 import { createSlashBuilder } from "@/utils/builder.js";
 import { SlashCommandLoader } from "./slash.js";
 import {
     ApplicationCommandOption,
     ApplicationCommandOptionTypes,
 } from "discordeno";
+import { File, Group } from "@discord-fp/core";
 
 export type SlashGroupConfig = ApplicationCommandConfig & DescriptionConfig;
 
-export class SlashCommandGroupLoader implements GroupLoader {
-    readonly type = "group";
+export class SlashCommandGroupLoader implements FPGroupLoader {
     readonly config: SlashGroupConfig;
 
     constructor(config: SlashGroupConfig) {
@@ -94,6 +97,6 @@ export class SlashCommandGroupLoader implements GroupLoader {
     }
 }
 
-function debugNode(node: Node, message: string) {
+function debugNode(node: File | Group, message: string) {
     console.debug(`${node.path} (${node.type})`, message);
 }

@@ -1,9 +1,9 @@
-import { readNode, Node } from "@/utils/reader.js";
-import { LoadContext, loadNode } from "@/utils/loader.js";
+import { LoadContext } from "@/utils/types.js";
 import { resolve } from "path";
 import { registerCommands, RegisterOptions } from "./register.js";
 import { Bot } from "discordeno";
-import { ListenerModule } from "@/index.js";
+import { ListenerModule } from "@/listener/module.js";
+import { loadNode, readNode, Node } from "@discord-fp/core";
 
 export type StartOptions = {
     bot: Bot;

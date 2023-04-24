@@ -9,9 +9,9 @@ import { SlashCommandGroupLoader, SlashGroupConfig } from "@/group.js";
 import {
     SlashCommandConfig,
     SlashCommandLoader,
-    SlashOptionsConfig,
+    SlashOptionRecord,
 } from "@/slash.js";
-import { MiddlewareFn } from "./middleware.js";
+import { MiddlewareFn } from "@discord-fp/core";
 
 export type CommandParams<TContextOut = unknown> = {
     _ctx: TContextOut;
@@ -23,14 +23,14 @@ function makeBuilder<Params extends CommandParams>(def: {
     const { middlewares } = def;
 
     return {
-        middleware<$Context = {}>(fn: MiddlewareFn<Params, $Context>) {
+        middleware<$Context = {}>(fn: MiddlewareFn<Params["_ctx"], $Context>) {
             return makeBuilder<{
                 _ctx: $Context;
             }>({ middlewares: [...middlewares, fn] });
         },
         slash(config) {
             const loader = new SlashCommandLoader(
-                config as SlashCommandConfig<SlashOptionsConfig, unknown>
+                config as SlashCommandConfig<SlashOptionRecord, unknown>
             );
             loader.middlewares = middlewares;
 
@@ -64,12 +64,12 @@ export function initCommandBuilder(): CommandBuilder<{ _ctx: {} }> {
 
 export interface CommandBuilder<Params extends CommandParams> {
     middleware<$Context = {}>(
-        fn: MiddlewareFn<Params, $Context>
+        fn: MiddlewareFn<Params["_ctx"], $Context>
     ): CommandBuilder<{
         _ctx: $Context;
     }>;
 
-    slash<Options extends SlashOptionsConfig = {}>(
+    slash<Options extends SlashOptionRecord = {}>(
         config: SlashCommandConfig<Options, Params["_ctx"]>
     ): SlashCommandLoader;
     user(config: UserMenuCommandConfig<Params["_ctx"]>): MenuCommandLoader;

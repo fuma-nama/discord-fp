@@ -1,28 +1,14 @@
-import { ListenerModule } from "@/index.js";
-import { CreateApplicationCommand } from "discordeno";
 import type { Group, Node, File } from "./reader.js";
 
-export type NodeLoader = FileLoader | GroupLoader;
-
-export type FileLoader = {
-    type: "file";
-    load(self: File, context: LoadContext): void | Promise<void>;
+export type FileLoader<Context = unknown> = {
+    load(self: File, context: Context): void | Promise<void>;
 };
 
-export type GroupLoader = {
-    type: "group";
-    load(self: Group, context: LoadContext): void | Promise<void>;
+export type GroupLoader<Context = unknown> = {
+    load(self: Group, context: Context): void | Promise<void>;
 };
 
-/**
- * Used for loading command, You may extend this type
- */
-export interface LoadContext {
-    listeners: ListenerModule;
-    commands: CreateApplicationCommand[];
-}
-
-export async function loadNode(node: Node, context: LoadContext) {
+export async function loadNode<Context>(node: Node, context: Context) {
     switch (node.type) {
         case "file": {
             await node.loader.load(node, context);

@@ -46,16 +46,16 @@ export type Folder = {
     nodes: Node[];
 };
 
-export type FileExport = {
-    default?: FileLoader;
-};
-
-export type MetaExport = {
-    default?: GroupLoader;
-};
-
 async function asyncImport(path: string) {
     return await import(pathToFileURL(path).href);
+}
+
+export async function readNode(path: string): Promise<Node> {
+    if (lstatSync(path).isDirectory()) {
+        return await readDir(path);
+    } else {
+        return await readFile(path);
+    }
 }
 
 /**
@@ -76,16 +76,10 @@ function findMetaFile(files: string[]): [meta: string | null, nodes: string[]] {
     return [meta, nodes];
 }
 
-export async function readNode(path: string): Promise<Node> {
-    if (lstatSync(path).isDirectory()) {
-        return await readDir(path);
-    } else {
-        return await readFile(path);
-    }
-}
-
 async function readFile(path: string): Promise<File> {
-    const { default: loader } = (await asyncImport(path)) as FileExport;
+    const { default: loader } = (await asyncImport(path)) as {
+        default?: FileLoader;
+    };
 
     if (loader == null) throw new Error(`Invalid loader ${path}`);
 
@@ -98,10 +92,9 @@ async function readFile(path: string): Promise<File> {
 }
 
 async function readMeta(path: string): Promise<Meta> {
-    const { default: loader } = (await asyncImport(path)) as MetaExport;
-
-    if (loader != null && loader.type !== "group")
-        throw new Error(`Invalid loader ${path}`);
+    const { default: loader } = (await asyncImport(path)) as {
+        default?: GroupLoader;
+    };
 
     return {
         loader,
