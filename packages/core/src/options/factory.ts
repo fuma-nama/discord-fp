@@ -19,7 +19,7 @@ type Option<T, Types extends Global = Global> = {
     transform<R extends any>(fn: (v: T) => R): Option<R, Types>;
 };
 
-type OptionFactory<Config, T, Types extends Global> = {
+export type OptionFactory<Config, T, Types extends Global> = {
     <Required extends boolean = true>(
         config: Omit<Config, "required"> & { required?: Required }
     ): Option<Required extends true ? T : T | null, Types>;
