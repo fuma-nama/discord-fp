@@ -1,5 +1,13 @@
 # @discord-fp/djs
 
+## 4.0.1
+
+### Patch Changes
+
+- 71f8a94: Fix middleware context type discriminant
+- Updated dependencies [71f8a94]
+  - @discord-fp/core@4.0.1
+
 ## 4.0.0
 
 ### Major Changes
