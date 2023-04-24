@@ -29,8 +29,8 @@ export function parseOptionValue(
 ): any {
     const resolved = interation.data?.resolved;
 
-    if (resolved == null || data.value == null) {
-        return null;
+    if (resolved == null) {
+        return data.value;
     }
 
     if (data.type === ApplicationCommandOptionTypes.User) {
