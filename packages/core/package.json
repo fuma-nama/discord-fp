@@ -15,7 +15,7 @@
     "scripts": {
         "build": "tsup src/index.ts --dts --clean --format esm,cjs",
         "dev": "tsup src/index.ts --dts --clean --format esm,cjs --watch",
-        "test": "echo \"No test specified\""
+        "test": "vitest run"
     },
     "files": [
         "./dist"
